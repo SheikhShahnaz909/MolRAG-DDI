@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-clinical-bg text-clinical-text font-body;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.molecular-bg {
+  background-image:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(14, 124, 134, 0.15) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 60% 70%,
+      rgba(14, 124, 134, 0.15) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(14, 124, 134, 0.15) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 40% 85%,
+      rgba(14, 124, 134, 0.12) 2px,
+      transparent 2px
+    ),
+    linear-gradient(
+      120deg,
+      rgba(14, 124, 134, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      240deg,
+      rgba(14, 124, 134, 0.08) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    140px 140px,
+    160px 160px,
+    180px 180px,
+    200px 200px,
+    60px 60px,
+    60px 60px;
+}
+
+.card {
+  @apply bg-white rounded-xl border border-clinical-border shadow-sm;
+}
+
+.btn-primary {
+  @apply bg-clinical-teal hover:bg-clinical-tealLight
+    text-white font-body font-medium
+    px-6 py-3 rounded-lg
+    transition-colors duration-200
+    flex items-center gap-2
+    focus:outline-none focus:ring-2
+    focus:ring-clinical-teal focus:ring-offset-2;
+}

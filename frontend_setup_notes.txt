@@ -1,0 +1,19 @@
+SETUP INSTRUCTIONS
+==================
+1. npm create vite@latest frontend -- --template react
+2. cd frontend
+3. npm install
+4. npm install -D tailwindcss postcss autoprefixer
+5. npx tailwindcss init -p
+6. npm install lucide-react react-router-dom
+7. Copy every file from this zip into your project (same folder paths)
+8. npm run dev
+
+NOT YET CONNECTED (needs real backend work — see chat for details):
+- OTP email delivery (Forgot Password flow)
+- Login/Register persistence (needs a real auth backend + DB)
+- Medicine image recognition (needs OCR/vision backend)
+- Prescription OCR (needs OCR backend)
+- Drug Information / Compare Drugs data (needs DrugBank/RxNorm or your dataset)
+- Real interaction prediction (Results page still shows demo data)
+Each spot is marked with a // TODO comment in the relevant file.

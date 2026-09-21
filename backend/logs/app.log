@@ -1,0 +1,135 @@
+2026-08-20 15:02:00,375 | INFO | predict_service | Loading model on device: cpu
+2026-08-20 15:02:00,782 | INFO | predict_service | Model loaded successfully.
+2026-08-20 15:02:07,164 | INFO | main | MolRAG-DDI API starting up...
+2026-08-20 15:02:07,164 | INFO | main | Model and services ready.
+2026-08-20 15:04:51,707 | INFO | prediction_router | Request received: warfarin + aspirin
+2026-08-20 15:04:51,707 | WARNING | prediction_router | Validation failed: Drug not found: 'warfarin'
+2026-08-20 15:04:57,594 | INFO | prediction_router | Request received: warfarin + aspirin
+2026-08-20 15:04:57,594 | WARNING | prediction_router | Validation failed: Drug not found: 'warfarin'
+2026-08-25 11:09:25,165 | INFO | predict_service | Loading model on device: cpu
+2026-08-25 11:09:25,737 | INFO | predict_service | Model loaded successfully.
+2026-08-25 11:09:28,733 | INFO | main | MolRAG-DDI API starting up...
+2026-08-25 11:09:28,733 | INFO | main | Model and services ready.
+2026-08-25 11:12:00,064 | INFO | prediction_router | Request received: Warfarin + Aspirin
+2026-08-25 11:12:00,065 | WARNING | prediction_router | Validation failed: Drug not found: 'Warfarin'
+2026-08-25 11:12:32,289 | INFO | prediction_router | Request received: warfarin + Aspirin
+2026-08-25 11:12:32,290 | WARNING | prediction_router | Validation failed: Drug not found: 'warfarin'
+2026-08-25 11:12:40,917 | INFO | prediction_router | Request received: Warfarin + Aspirin
+2026-08-25 11:12:40,917 | WARNING | prediction_router | Validation failed: Drug not found: 'Warfarin'
+2026-08-25 17:59:16,580 | INFO | predict_service | Loading model on device: cpu
+2026-08-25 17:59:17,249 | INFO | predict_service | Model loaded successfully.
+2026-08-25 17:59:18,469 | INFO | main | MolRAG-DDI API starting up...
+2026-08-25 17:59:18,469 | INFO | main | Model and services ready.
+2026-08-25 17:59:22,847 | INFO | prediction_router | Request received: Berotralstat + Aspirin
+2026-08-25 17:59:22,847 | WARNING | prediction_router | Validation failed: Drug not found: 'Berotralstat'
+2026-08-25 17:59:25,524 | INFO | prediction_router | Request received: Berotralstat + Aspirin
+2026-08-25 17:59:25,525 | WARNING | prediction_router | Validation failed: Drug not found: 'Berotralstat'
+2026-08-26 12:42:54,888 | INFO | predict_service | Loading model on device: cpu
+2026-08-26 12:42:55,858 | INFO | predict_service | Model loaded successfully.
+2026-08-26 12:42:57,699 | INFO | main | MolRAG-DDI API starting up...
+2026-08-26 12:42:57,700 | INFO | main | Model and services ready.
+2026-09-04 19:52:54,814 | INFO | predict_service | Loading model on device: cpu
+2026-09-04 19:52:55,484 | INFO | predict_service | Model loaded successfully.
+2026-09-04 19:52:56,638 | INFO | main | MolRAG-DDI API starting up...
+2026-09-04 19:52:56,638 | INFO | main | Model and services ready.
+2026-09-06 10:39:51,742 | INFO | predict_service | Loading model on device: cpu
+2026-09-06 10:39:53,248 | INFO | predict_service | Model loaded successfully.
+2026-09-06 10:39:56,332 | INFO | main | MolRAG-DDI API starting up...
+2026-09-06 10:39:56,332 | INFO | main | Model and services ready.
+2026-09-06 10:41:04,459 | INFO | prediction_router | Request received: aspirin + berotralstat
+2026-09-06 10:41:04,460 | WARNING | prediction_router | Validation failed: Drug not found: 'aspirin'
+2026-09-06 10:41:41,098 | INFO | prediction_router | Request received: abacavir + berotralstat
+2026-09-06 10:41:41,099 | WARNING | prediction_router | Validation failed: Drug not found: 'abacavir'
+2026-09-06 10:41:42,534 | INFO | prediction_router | Request received: abacavir + berotralstat
+2026-09-06 10:41:42,534 | WARNING | prediction_router | Validation failed: Drug not found: 'abacavir'
+2026-09-06 10:45:02,338 | INFO | prediction_router | Request received: abacavir + berotralstat
+2026-09-06 10:45:02,345 | WARNING | prediction_router | Validation failed: Drug not found: 'abacavir'
+2026-09-06 10:45:03,579 | INFO | prediction_router | Request received: abacavir + berotralstat
+2026-09-06 10:45:03,580 | WARNING | prediction_router | Validation failed: Drug not found: 'abacavir'
+2026-09-06 11:55:35,757 | INFO | predict_service | Loading model on device: cpu
+2026-09-06 11:55:36,324 | INFO | predict_service | Model loaded successfully.
+2026-09-06 11:55:38,018 | INFO | main | MolRAG-DDI API starting up...
+2026-09-06 11:55:38,018 | INFO | main | Model and services ready.
+2026-09-06 11:55:49,798 | INFO | prediction_router | Request received: Abacavir + Berotralstat
+2026-09-06 11:55:49,798 | WARNING | prediction_router | Validation failed: Drug not found: 'Abacavir'
+2026-09-06 11:55:50,942 | INFO | prediction_router | Request received: Abacavir + Berotralstat
+2026-09-06 11:55:50,943 | WARNING | prediction_router | Validation failed: Drug not found: 'Abacavir'
+2026-09-06 12:05:10,892 | INFO | prediction_router | Request received: Berotralstat + Abacavir
+2026-09-06 12:05:10,907 | WARNING | prediction_router | Validation failed: Drug not found: 'Berotralstat'
+2026-09-06 12:05:36,101 | INFO | prediction_router | Request received: Acitretin + Abacavir
+2026-09-06 12:05:36,101 | WARNING | prediction_router | Validation failed: Drug not found: 'Acitretin'
+2026-09-06 12:06:17,081 | INFO | prediction_router | Request received: Abacavir + Calcium chloride
+2026-09-06 12:06:17,082 | WARNING | prediction_router | Validation failed: Drug not found: 'Abacavir'
+2026-09-06 17:25:42,109 | INFO | prediction_router | Request received: Abacavir + Calcium chloride
+2026-09-06 17:25:42,120 | WARNING | prediction_router | Validation failed: Drug not found: 'Abacavir'
+2026-09-06 17:33:04,495 | INFO | predict_service | Loading model on device: cpu
+2026-09-06 17:33:06,176 | INFO | predict_service | Model loaded successfully.
+2026-09-06 17:33:10,450 | INFO | main | MolRAG-DDI API starting up...
+2026-09-06 17:33:10,451 | INFO | main | Model and services ready.
+2026-09-06 17:34:35,523 | INFO | prediction_router | Request received: Abacavir + Calcium chloride
+2026-09-06 17:34:35,523 | WARNING | prediction_router | Validation failed: Drug not found: 'Abacavir'
+2026-09-06 17:36:49,693 | INFO | predict_service | Loading model on device: cpu
+2026-09-06 17:36:50,163 | INFO | predict_service | Model loaded successfully.
+2026-09-06 17:36:52,358 | INFO | main | MolRAG-DDI API starting up...
+2026-09-06 17:36:52,360 | INFO | main | Model and services ready.
+2026-09-06 17:37:06,171 | INFO | predict_service | Loading model on device: cpu
+2026-09-06 17:37:06,688 | INFO | predict_service | Model loaded successfully.
+2026-09-06 17:37:07,787 | INFO | main | MolRAG-DDI API starting up...
+2026-09-06 17:37:07,787 | INFO | main | Model and services ready.
+2026-09-06 17:37:16,869 | INFO | predict_service | Loading model on device: cpu
+2026-09-06 17:37:17,285 | INFO | predict_service | Model loaded successfully.
+2026-09-06 17:37:18,792 | INFO | main | MolRAG-DDI API starting up...
+2026-09-06 17:37:18,796 | INFO | main | Model and services ready.
+2026-09-06 17:37:49,947 | INFO | prediction_router | Request received: Abacavir + Calcium chloride
+2026-09-06 17:37:51,606 | INFO | predict_service | Prediction: Abacavir + Calcium chloride -> Moderate (55.47%)
+2026-09-06 17:37:51,616 | ERROR | prediction_router | Internal error: BaseCAM.__call__() missing 1 required positional argument: 'targets'
+Traceback (most recent call last):
+  File "C:\MolRAG-DDI\backend\routers\prediction.py", line 34, in predict
+    gradcam_a_path, gradcam_b_path = generate_gradcam_pair(model, payload.drug1, payload.drug2)
+                                     ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\MolRAG-DDI\backend\services\gradcam.py", line 62, in generate_gradcam_pair
+    grayscale_cam_a = cam_a(input_tensor=img_a_tensor)[0]
+                      ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: BaseCAM.__call__() missing 1 required positional argument: 'targets'
+2026-09-08 16:07:46,427 | INFO | predict_service | Loading model on device: cpu
+2026-09-08 16:07:47,155 | INFO | predict_service | Model loaded successfully.
+2026-09-11 18:03:07,743 | INFO | predict_service | Loading model on device: cpu
+2026-09-11 18:03:08,339 | INFO | predict_service | Model loaded successfully.
+2026-09-11 18:03:11,215 | INFO | main | MolRAG-DDI API starting up...
+2026-09-11 18:03:11,215 | INFO | main | Model and services ready.
+2026-09-11 18:03:43,594 | INFO | prediction_router | Request received: Abacavir + Acarbose
+2026-09-11 18:03:45,292 | INFO | predict_service | Prediction: Abacavir + Acarbose -> Moderate (66.15%)
+2026-09-11 18:03:50,420 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acarbose_heatmap.png
+2026-09-12 20:27:08,000 | INFO | predict_service | Loading model on device: cpu
+2026-09-12 20:27:09,864 | INFO | predict_service | Model loaded successfully.
+2026-09-12 20:27:16,403 | INFO | main | MolRAG-DDI API starting up...
+2026-09-12 20:27:16,404 | INFO | main | Model and services ready.
+2026-09-12 20:30:04,107 | INFO | prediction_router | Request received: Abacavir + Acitretin
+2026-09-12 20:30:05,789 | INFO | predict_service | Prediction: Abacavir + Acitretin -> Severe (89.64%)
+2026-09-12 20:30:11,256 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png
+2026-09-13 11:22:42,840 | INFO | rag_service | Loading RAG components...
+2026-09-17 19:53:30,914 | INFO | rag_service | Loading RAG components...
+2026-09-17 19:55:40,076 | INFO | rag_service | Loading RAG components...
+2026-09-17 20:00:52,745 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-17 20:00:56,958 | INFO | rag_service | RAG explanation generated for Warfarin + Aspirin
+2026-09-19 12:12:58,790 | INFO | rag_service | Loading RAG components...
+2026-09-19 12:13:17,246 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-19 12:13:21,665 | INFO | rag_service | RAG explanation generated for Warfarin + Aspirin
+2026-09-19 12:15:18,623 | INFO | rag_service | Loading RAG components...
+2026-09-19 12:15:30,419 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-19 12:15:32,839 | INFO | predict_service | Loading model on device: cpu
+2026-09-19 12:15:33,436 | INFO | predict_service | Model loaded successfully.
+2026-09-19 12:15:36,673 | INFO | main | MolRAG-DDI API starting up...
+2026-09-19 12:15:36,673 | INFO | main | Model and services ready.
+2026-09-19 12:28:03,882 | INFO | rag_service | Loading RAG components...
+2026-09-19 12:28:20,818 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-19 12:28:22,373 | INFO | predict_service | Loading model on device: cpu
+2026-09-19 12:28:23,563 | INFO | predict_service | Model loaded successfully.
+2026-09-19 12:28:28,168 | INFO | main | MolRAG-DDI API starting up...
+2026-09-19 12:28:28,168 | INFO | main | Model and services ready.
+2026-09-19 12:29:20,157 | INFO | prediction_router | Request received: abacavir + acebutolol
+2026-09-19 12:29:20,157 | WARNING | prediction_router | Validation failed: Drug not found: 'abacavir'
+2026-09-19 12:29:39,280 | INFO | prediction_router | Request received: Abacavir + Acebutolol
+2026-09-19 12:29:41,109 | INFO | predict_service | Prediction: Abacavir + Acebutolol -> Moderate (66.04%)
+2026-09-19 12:29:47,131 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acebutolol_heatmap.png
+2026-09-19 12:29:50,328 | INFO | rag_service | RAG explanation generated for Abacavir + Acebutolol
