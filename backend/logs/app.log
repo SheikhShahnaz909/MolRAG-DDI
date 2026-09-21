@@ -133,3 +133,15 @@ TypeError: BaseCAM.__call__() missing 1 required positional argument: 'targets'
 2026-09-19 12:29:41,109 | INFO | predict_service | Prediction: Abacavir + Acebutolol -> Moderate (66.04%)
 2026-09-19 12:29:47,131 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acebutolol_heatmap.png
 2026-09-19 12:29:50,328 | INFO | rag_service | RAG explanation generated for Abacavir + Acebutolol
+2026-09-21 09:38:38,810 | INFO | rag_service | Loading RAG components...
+2026-09-21 09:41:23,355 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-21 09:41:32,009 | INFO | predict_service | Loading model on device: cpu
+2026-09-21 09:41:34,195 | INFO | predict_service | Model loaded successfully.
+2026-09-21 09:41:46,626 | INFO | main | MolRAG-DDI API starting up...
+2026-09-21 09:41:46,628 | INFO | main | Model and services ready.
+2026-09-21 10:10:46,187 | INFO | rag_service | Loading RAG components...
+2026-09-21 10:11:03,759 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-21 10:11:07,434 | INFO | predict_service | Loading model on device: cpu
+2026-09-21 10:11:08,895 | INFO | predict_service | Model loaded successfully.
+2026-09-21 10:11:15,652 | INFO | main | MolRAG-DDI API starting up...
+2026-09-21 10:11:15,653 | INFO | main | Model and services ready.
