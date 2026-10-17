@@ -29,13 +29,53 @@ _pair_df = pd.read_csv(os.path.join(MODELS_DIR, "faiss_pair_order.csv"))
 _index = faiss.read_index(os.path.join(MODELS_DIR, "faiss_index.bin"))
 _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
+# Per-drug symptom lists (from drug_side_effects.csv) -- gives FLAN-T5 actual
+# concrete symptoms to reference, since the pair evidence text alone is often
+# a generic templated sentence with no specific symptom detail.
+_side_effects_path = os.path.join(MODELS_DIR, "drug_side_effects.csv")
+if os.path.exists(_side_effects_path):
+    _side_effects_df = pd.read_csv(_side_effects_path).set_index("drug_name")
+    _SIDE_EFFECTS = _side_effects_df["side_effects"].to_dict()
+else:
+    _SIDE_EFFECTS = {}
+    logger.warning("drug_side_effects.csv not found -- explanations won't include specific symptoms.")
+
+
+def _get_side_effects(drug_name: str) -> str:
+    return _SIDE_EFFECTS.get(drug_name.upper(), "")
+
 _tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
 _model_t5 = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-base")
 
 logger.info(f"RAG ready: {_index.ntotal} evidence vectors loaded.")
 
 
-def _retrieve_evidence(drug1: str, drug2: str, top_k: int = 2):
+def _exact_pair_matches(drug1: str, drug2: str, top_k: int):
+    """Look for rows where (Drug 1, Drug 2) match the query in either order,
+    case-insensitively. This is the ground truth when it exists -- semantic
+    search is only a fallback for pairs missing from the dataset."""
+    d1, d2 = drug1.strip().lower(), drug2.strip().lower()
+    col1 = _pair_df["Drug 1"].str.strip().str.lower()
+    col2 = _pair_df["Drug 2"].str.strip().str.lower()
+
+    mask = ((col1 == d1) & (col2 == d2)) | ((col1 == d2) & (col2 == d1))
+    matches = _pair_df[mask]
+
+    results = []
+    for _, row in matches.head(top_k).iterrows():
+        results.append({
+            "drug1": row["Drug 1"],
+            "drug2": row["Drug 2"],
+            "text": row["Interaction Description"],
+        })
+    return results
+
+
+def _semantic_fallback(drug1: str, drug2: str, top_k: int):
+    """Used only when no exact pair exists in the evidence dataset. NOTE: the
+    index was built by embedding evidence text, not drug names, so this is an
+    approximate fallback -- results may be topically related rather than
+    pair-specific."""
     query = f"{drug1} and {drug2} interaction"
     query_vec = _embedder.encode([query]).astype("float32")
     distances, indices = _index.search(query_vec, top_k)
@@ -53,6 +93,14 @@ def _retrieve_evidence(drug1: str, drug2: str, top_k: int = 2):
     return results
 
 
+def _retrieve_evidence(drug1: str, drug2: str, top_k: int = 2):
+    exact = _exact_pair_matches(drug1, drug2, top_k)
+    if exact:
+        return exact
+    logger.info(f"No exact pair match for {drug1} + {drug2}; using semantic fallback")
+    return _semantic_fallback(drug1, drug2, top_k)
+
+
 def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
     """
     Called by routers/prediction.py after the model has already predicted severity.
@@ -61,14 +109,46 @@ def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
     evidence = _retrieve_evidence(drug1, drug2, top_k=2)
     evidence_text = " ".join([e["text"] for e in evidence])
 
+    side_effects_1 = _get_side_effects(drug1)
+    side_effects_2 = _get_side_effects(drug2)
+    side_effects_block = ""
+    if side_effects_1 or side_effects_2:
+        side_effects_block = (
+            f"Known side effects of {drug1}: {side_effects_1 or 'not available'}.\n"
+            f"Known side effects of {drug2}: {side_effects_2 or 'not available'}.\n"
+        )
+
+    # A more specific prompt steers FLAN-T5 away from one-line generic
+    # summaries -- asking for mechanism + a concrete symptom each individual
+    # drug can cause gets a noticeably more specific answer than just
+    # "explain why", since the pair evidence text alone is often too vague.
     prompt = (
-        f"Drug interaction prediction: {drug1} and {drug2} have a {severity} interaction. "
-        f"Relevant background: {evidence_text} "
-        f"Explain in simple terms why this interaction might be {severity}."
+        f"You are a clinical pharmacist explaining a drug interaction to a patient.\n"
+        f"Drug A: {drug1}\n"
+        f"Drug B: {drug2}\n"
+        f"Predicted severity: {severity}\n"
+        f"Relevant background evidence: {evidence_text}\n"
+        f"{side_effects_block}\n"
+        f"Write a clear explanation covering: "
+        f"(1) the likely pharmacological mechanism behind this interaction, "
+        f"(2) why it is classified as {severity} severity, and "
+        f"(3) specific symptoms or effects a patient might experience, drawing on the "
+        f"known side effects listed above where relevant (e.g. nausea, bleeding risk, drowsiness)."
     )
 
     input_ids = _tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512).input_ids
-    output_ids = _model_t5.generate(input_ids, max_length=150)
+    # min_length forces the model past its default tendency to stop after one
+    # short sentence; beam search + no_repeat_ngram_size give more coherent,
+    # less repetitive output than the previous greedy decoding.
+    output_ids = _model_t5.generate(
+        input_ids,
+        max_length=220,
+        min_length=60,
+        num_beams=4,
+        no_repeat_ngram_size=3,
+        length_penalty=1.2,
+        early_stopping=True,
+    )
     explanation = _tokenizer.decode(output_ids[0], skip_special_tokens=True)
 
     logger.info(f"RAG explanation generated for {drug1} + {drug2}")

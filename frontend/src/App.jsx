@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 
@@ -14,64 +16,76 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 import DrugInformation from "./pages/DrugInformation.jsx";
 import CompareDrugs from "./pages/CompareDrugs.jsx";
 import HowItWorks from "./pages/HowItWorks.jsx";
-
-// We'll create these two pages next.
 import Profile from "./pages/Profile.jsx";
 import Logout from "./pages/Logout.jsx";
 
-// Navbar is hidden on authentication pages.
-const AUTH_ROUTES = [
-  "/login",
-  "/register",
-  "/forgot-password",
-];
+const TITLES = {
+  "/prediction": "Check Interactions",
+  "/results": "Prediction Result",
+  "/drug-info": "Drug Information",
+  "/compare": "Compare Drugs",
+  "/history": "Prediction History",
+  "/how-it-works": "How It Works",
+  "/about": "About",
+  "/login": "Log In",
+  "/register": "Create Account",
+  "/verify-otp": "Verify Email",
+  "/forgot-password": "Reset Password",
+  "/profile": "My Profile",
+  "/logout": "Logged Out",
+};
+
+// Navbar is hidden on authentication pages (verify-otp added: it has its own back button).
+const AUTH_ROUTES = ["/login", "/register", "/forgot-password", "/verify-otp"];
 
 export default function App() {
   const location = useLocation();
   const isAuthPage = AUTH_ROUTES.includes(location.pathname);
 
+  useEffect(() => {
+    const page = TITLES[location.pathname];
+    document.title = page ? `${page} | MolRAG-DDI` : "MolRAG-DDI";
+  }, [location.pathname]);
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen flex flex-col">
+        {!isAuthPage && <Navbar />}
 
-      {!isAuthPage && <Navbar />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.main
+            key={location.pathname}
+            className="flex-1"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+          >
+            <Routes location={location}>
+              <Route path="/" element={<Home />} />
 
-      <main className="flex-1">
-        <Routes>
+              <Route path="/prediction" element={<Prediction />} />
+              <Route path="/drug-info" element={<DrugInformation />} />
+              <Route path="/compare" element={<CompareDrugs />} />
+              <Route path="/results" element={<Results />} />
 
-          {/* Home */}
-          <Route path="/" element={<Home />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/about" element={<About />} />
 
-          {/* Main features */}
-          <Route path="/prediction" element={<Prediction />} />
-          <Route path="/drug-info" element={<DrugInformation />} />
-          <Route path="/compare" element={<CompareDrugs />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/verify-otp" element={<OTPVerification />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
 
-          {/* Results */}
-          <Route path="/results" element={<Results />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/logout" element={<Logout />} />
+            </Routes>
+          </motion.main>
+        </AnimatePresence>
 
-          {/* Secondary pages */}
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/about" element={<About />} />
-
-          {/* Authentication */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify-otp" element={<OTPVerification />} />
-          <Route
-            path="/forgot-password"
-            element={<ForgotPassword />}
-          />
-
-          {/* Account */}
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/logout" element={<Logout />} />
-
-        </Routes>
-      </main>
-
-      <Footer />
-
-    </div>
+        <Footer />
+      </div>
+    </MotionConfig>
   );
 }

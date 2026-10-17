@@ -1,17 +1,56 @@
+import { API_URL } from "../config";
 import { useState } from "react";
-import { Upload, ImageOff } from "lucide-react";
+import { Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
-// Medicine/tablet image upload with preview.
-// Recognition itself is NOT implemented — see the note shown after upload.
-export default function ImageUploadInput() {
+// Medicine/tablet image upload -> OCR -> fuzzy drug match -> user confirms one.
+export default function ImageUploadInput({ onDetected }) {
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [matches, setMatches] = useState(null);
+  const [selected, setSelected] = useState("");
+  const [error, setError] = useState("");
 
-  function handleFile(e) {
+  async function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setFileName(file.name);
     setPreview(URL.createObjectURL(file));
+    setMatches(null);
+    setSelected("");
+    setError("");
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(`${API_URL}/api/ocr`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Could not process this image.");
+      }
+
+      setMatches(data.matches || []);
+      if (!data.matches?.length) {
+        setError("No matching drug name found in this image. Try a clearer photo of the label.");
+      }
+    } catch (err) {
+      setError(err.message || "Unable to reach the server.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function confirmMatch(name) {
+    setSelected(name);
+    onDetected?.(name);
   }
 
   return (
@@ -29,13 +68,43 @@ export default function ImageUploadInput() {
       {preview && (
         <div className="mt-4 flex items-start gap-4">
           <img src={preview} alt={fileName} className="w-24 h-24 object-cover rounded-lg border border-clinical-border" />
-          <div className="text-sm">
-            <p className="font-medium text-clinical-navy">{fileName}</p>
-            <p className="text-severity-moderate flex items-start gap-1 mt-1">
-              <ImageOff className="w-4 h-4 shrink-0 mt-0.5" />
-              Medicine recognition isn't connected yet — this needs an OCR/image-recognition
-              backend before a drug name can be identified automatically.
-            </p>
+          <div className="text-sm flex-1">
+            <p className="font-medium text-clinical-navy mb-2">{fileName}</p>
+
+            {loading && <p className="text-clinical-muted">Reading image...</p>}
+
+            {error && (
+              <p className="text-severity-severe flex items-start gap-1">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                {error}
+              </p>
+            )}
+
+            {matches?.length > 0 && !selected && (
+              <div>
+                <p className="text-clinical-muted mb-2">Did we get it right? Select one:</p>
+                <div className="flex flex-wrap gap-2">
+                  {matches.map((m) => (
+                    <button
+                      key={m.drug_name}
+                      type="button"
+                      onClick={() => confirmMatch(m.drug_name)}
+                      className="px-3 py-1.5 rounded-lg border border-clinical-border text-xs font-medium
+                                 hover:border-clinical-teal hover:bg-clinical-bg transition-colors"
+                    >
+                      {m.drug_name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selected && (
+              <p className="text-severity-safe flex items-center gap-1.5 font-medium">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                Using: {selected}
+              </p>
+            )}
           </div>
         </div>
       )}

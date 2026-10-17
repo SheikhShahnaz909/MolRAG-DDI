@@ -1,6 +1,10 @@
+import { AUTH_URL } from "../config";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Mail, RefreshCw } from "lucide-react";
+import { motion } from "framer-motion";
+import { CheckCircle, RefreshCw } from "lucide-react";
+import AuthLayout from "../components/AuthLayout";
+import { AuthMessage, AuthButton } from "../components/AuthKit";
 
 export default function OTPVerification() {
   const navigate = useNavigate();
@@ -13,8 +17,14 @@ export default function OTPVerification() {
   const [message, setMessage] = useState("");
   const [seconds, setSeconds] = useState(60);
   const [loading, setLoading] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const inputsRef = useRef([]);
+
+  // Start on the first box.
+  useEffect(() => {
+    inputsRef.current[0]?.focus();
+  }, []);
 
   /*
     Countdown for OTP expiry/resend.
@@ -58,10 +68,7 @@ export default function OTPVerification() {
   function handlePaste(e) {
     e.preventDefault();
 
-    const pasted = e.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
-      .slice(0, 6);
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
 
     if (!pasted) return;
 
@@ -77,253 +84,201 @@ export default function OTPVerification() {
     inputsRef.current[nextIndex]?.focus();
   }
 
-
-
   async function handleVerify(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  const enteredOTP = otp.join("");
+    const enteredOTP = otp.join("");
 
-  if (enteredOTP.length !== 6) {
-    setError("Please enter the complete 6-digit OTP.");
-    return;
-  }
-
-  if (!email) {
-    setError("Email information is missing. Please register again.");
-    return;
-  }
-
-  setLoading(true);
-  setError("");
-  setMessage("");
-
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/otp/verify",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp: enteredOTP,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        data.message || "OTP verification failed."
-      );
+    if (enteredOTP.length !== 6) {
+      setError("Please enter the complete 6-digit OTP.");
+      return;
     }
 
-    if (data.verified) {
-      // Temporary frontend login state.
-      // This will later be replaced by your friend's
-      // real authentication response.
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: location.state?.name || "",
-          email,
-        })
-      );
+    if (!email) {
+      setError("Email information is missing. Please register again.");
+      return;
+    }
 
-      localStorage.setItem(
-        "authToken",
-        "email-verified"
-      );
-      window.dispatchEvent(new Event("authChanged"));
-      navigate("/profile", {
-        replace: true,
+    setLoading(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch(`${AUTH_URL}/api/otp/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp: enteredOTP }),
       });
-    }
 
-  } catch (error) {
-    setError(
-      error.message ||
-      "OTP verification failed. Please try again."
-    );
-  } finally {
-    setLoading(false);
-  }
-}
+      const data = await response.json();
 
-async function handleResend() {
-  if (seconds > 0 || !email) return;
-
-  setError("");
-  setMessage("");
-
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/otp/send",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-        }),
+      if (!response.ok) {
+        throw new Error(data.message || "OTP verification failed.");
       }
-    );
 
-    const data = await response.json();
+      if (data.verified) {
+        const password = location.state?.password;
+        const name = location.state?.name || "";
 
-    if (!response.ok) {
-      throw new Error(
-        data.message || "Unable to resend OTP."
-      );
+        if (!password) {
+          setError("Registration details are missing. Please register again.");
+          setLoading(false);
+          return;
+        }
+
+        const registerResponse = await fetch(`${AUTH_URL}/api/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name }),
+        });
+
+        const registerData = await registerResponse.json();
+
+        if (!registerResponse.ok || !registerData.success) {
+          throw new Error(registerData.message || "Account creation failed.");
+        }
+
+        localStorage.setItem("user", JSON.stringify(registerData.user));
+        localStorage.setItem("authToken", registerData.token);
+        window.dispatchEvent(new Event("authChanged"));
+
+        // Brief success moment before moving on.
+        setVerified(true);
+        await new Promise((resolve) => setTimeout(resolve, 1100));
+        navigate("/profile", { replace: true });
+      }
+    } catch (error) {
+      setError(error.message || "OTP verification failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    setSeconds(60);
-    setOtp(["", "", "", "", "", ""]);
-
-    inputsRef.current[0]?.focus();
-
-    setMessage("A new OTP has been sent to your email.");
-
-  } catch (error) {
-    setError(
-      error.message ||
-      "Unable to resend OTP. Please try again."
-    );
   }
-}
+
+  async function handleResend() {
+    if (seconds > 0 || !email) return;
+
+    setError("");
+    setMessage("");
+
+    try {
+      const response = await fetch(`${AUTH_URL}/api/otp/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to resend OTP.");
+      }
+
+      setSeconds(60);
+      setOtp(["", "", "", "", "", ""]);
+      inputsRef.current[0]?.focus();
+      setMessage("A new OTP has been sent to your email.");
+    } catch (error) {
+      setError(error.message || "Unable to resend OTP. Please try again.");
+    }
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-clinical-bg">
-
-      <div className="w-full max-w-md">
-
-        {/* Back */}
-        <button
-          type="button"
-          onClick={() => navigate("/register")}
-          className="inline-flex items-center gap-1.5 text-clinical-navy
-                     hover:text-clinical-teal font-medium text-sm mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back
-        </button>
-
-        <div className="card p-8 sm:p-10">
-
-          {/* Icon */}
-          <div className="w-14 h-14 rounded-full bg-clinical-teal/10
-                          flex items-center justify-center mx-auto mb-5">
-            <Mail className="w-7 h-7 text-clinical-teal" />
-          </div>
-
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold
-                         text-clinical-navy text-center">
-            Verify Your Email
-          </h1>
-
-          <p className="text-sm text-clinical-muted text-center mt-3">
-            We sent a 6-digit verification code to
-          </p>
-
-          <p className="text-sm font-medium text-clinical-navy text-center mt-1 break-all">
-            {email || "your email address"}
-          </p>
-
-          {/* OTP */}
+    <AuthLayout
+      back
+      heading="One last step."
+      blurb="Confirm your email to finish creating your account."
+      title="Verify your email"
+      subtitle={
+        <>
+          We sent a 6-digit code to{" "}
+          <span className="font-medium text-clinical-navy break-all">{email || "your email address"}</span>.
+        </>
+      }
+    >
+      <div className="card p-7 sm:p-9">
+        {verified ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-6">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 220, damping: 14 }}
+              className="w-20 h-20 mx-auto rounded-full bg-severity-safeBg flex items-center justify-center"
+            >
+              <svg viewBox="0 0 24 24" className="w-10 h-10 text-severity-safe" fill="none" stroke="currentColor"
+                   strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+                             transition={{ delay: 0.25, duration: 0.5 }} />
+              </svg>
+            </motion.div>
+            <p className="font-display font-semibold text-xl text-clinical-navy mt-5">Email verified</p>
+            <p className="text-sm text-clinical-muted mt-1" role="status">Setting up your account...</p>
+          </motion.div>
+        ) : (
           <form onSubmit={handleVerify}>
-
-            <div
-              className="flex justify-center gap-2 sm:gap-3 mt-8"
+            {/* OTP boxes: shake as a group when there's an error */}
+            <motion.div
+              key={error || "ok"}
+              animate={error ? { x: [0, -8, 8, -6, 6, 0] } : { x: 0 }}
+              transition={{ duration: 0.4 }}
+              className="flex justify-center gap-2 sm:gap-3"
               onPaste={handlePaste}
             >
               {otp.map((digit, index) => (
-                <input
+                <motion.input
                   key={index}
                   ref={(element) => {
                     inputsRef.current[index] = element;
                   }}
                   value={digit}
-                  onChange={(e) =>
-                    handleChange(index, e.target.value)
-                  }
-                  onKeyDown={(e) =>
-                    handleKeyDown(index, e)
-                  }
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  onFocus={(e) => e.target.select()}
+                  animate={digit ? { scale: [1, 1.12, 1] } : { scale: 1 }}
+                  transition={{ duration: 0.2 }}
                   inputMode="numeric"
+                  autoComplete={index === 0 ? "one-time-code" : "off"}
                   maxLength={1}
                   aria-label={`OTP digit ${index + 1}`}
-                  className="w-11 h-12 sm:w-12 sm:h-14 text-center text-lg
-                             font-semibold rounded-lg border
-                             border-clinical-border
-                             text-clinical-navy
-                             focus:outline-none focus:ring-2
-                             focus:ring-clinical-teal"
+                  className={`w-11 h-14 sm:w-14 sm:h-16 text-center text-xl font-semibold font-mono rounded-xl border
+                              text-clinical-navy transition-colors duration-200
+                              focus:outline-none focus:border-clinical-teal focus:ring-4 focus:ring-clinical-teal/10
+                              ${error ? "border-severity-severe bg-severity-severeBg/40"
+                                : digit ? "border-clinical-teal bg-clinical-teal/5"
+                                : "border-clinical-border bg-white/70 hover:border-clinical-tealLight/70"}`}
                 />
               ))}
+            </motion.div>
+
+            <div className="mt-5 space-y-5">
+              <AuthMessage error={error} note={message} />
+
+              <AuthButton loading={loading} loadingText="Verifying...">
+                Verify OTP <CheckCircle className="w-4 h-4" />
+              </AuthButton>
             </div>
 
-            {error && (
-              <p className="text-sm text-severity-severe text-center mt-4">
-                {error}
-              </p>
-            )}
-
-            {message && (
-              <p className="text-sm text-severity-safe text-center mt-4">
-                {message}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full justify-center mt-7
-                         disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                "Verifying..."
+            {/* Resend */}
+            <div className="text-center mt-6">
+              {seconds > 0 ? (
+                <p className="text-sm text-clinical-muted">
+                  Resend OTP in{" "}
+                  <span className="font-mono font-medium text-clinical-navy">
+                    00:{String(seconds).padStart(2, "0")}
+                  </span>
+                </p>
               ) : (
-                <>
-                  Verify OTP
-                  <CheckCircle className="w-4 h-4" />
-                </>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  className="inline-flex items-center gap-2 text-sm text-clinical-teal font-medium hover:underline"
+                >
+                  <RefreshCw className="w-4 h-4" /> Resend OTP
+                </button>
               )}
-            </button>
-
+            </div>
           </form>
-
-          {/* Resend */}
-          <div className="text-center mt-6">
-
-            {seconds > 0 ? (
-              <p className="text-sm text-clinical-muted">
-                Resend OTP in{" "}
-                <span className="font-medium text-clinical-navy">
-                  00:{String(seconds).padStart(2, "0")}
-                </span>
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={handleResend}
-                className="inline-flex items-center gap-2 text-sm
-                           text-clinical-teal font-medium hover:underline"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Resend OTP
-              </button>
-            )}
-
-          </div>
-
-        </div>
-
+        )}
       </div>
-
-    </div>
+    </AuthLayout>
   );
 }

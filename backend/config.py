@@ -1,5 +1,6 @@
 import torch
 import os
+from dotenv import load_dotenv
 
 # ---- Paths ----
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -10,6 +11,9 @@ LOG_DIR = os.path.join(BASE_DIR, "logs")
 
 os.makedirs(GRADCAM_OUTPUT_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
+
+# ---- Load .env (backend/.env) before reading any environment variables ----
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # ---- Device ----
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -24,3 +28,12 @@ N_CHEM_FEATURES = N_LIPINSKI + FP_BITS
 IMAGE_SIZE = (224, 224)
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
+
+# ---- MongoDB (Task: history logging) ----
+# No hardcoded fallback: the app must fail loudly if .env is missing MONGO_URI,
+# rather than silently connecting with a stale/compromised credential.
+MONGO_URI = os.environ.get("MONGO_URI")
+if not MONGO_URI:
+    raise RuntimeError(
+        "MONGO_URI is not set. Add it to backend/.env -- see README/.env.example."
+    )

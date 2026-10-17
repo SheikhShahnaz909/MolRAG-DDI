@@ -12,9 +12,7 @@ const METHODS = [
 ];
 
 // Lets the user pick ONE of three input methods (not all three).
-// Only the "name" method feeds real drug data back to the parent right now —
-// image/prescription need OCR wired up before they can produce a drug name.
-export default function DrugInputSelector({ drugs, onChange, multi = true, minDrugs = 2, maxDrugs = 10 }) {
+export default function DrugInputSelector({ drugs, onChange, multi = true, minDrugs = 2, maxDrugs = 10, drugList }) {
   const [method, setMethod] = useState("name");
 
   return (
@@ -37,13 +35,46 @@ export default function DrugInputSelector({ drugs, onChange, multi = true, minDr
 
       {method === "name" && (
         multi ? (
-          <MultiDrugNameInput drugs={drugs} onChange={onChange} minDrugs={minDrugs} maxDrugs={maxDrugs} />
+          <MultiDrugNameInput drugs={drugs} onChange={onChange} minDrugs={minDrugs} maxDrugs={maxDrugs} drugList={drugList} />
         ) : (
-          <DrugAutocomplete value={drugs[0] || ""} onChange={(val) => onChange([val])} />
+          <DrugAutocomplete value={drugs[0] || ""} onChange={(val) => onChange([val])} drugList={drugList} />
         )
       )}
-      {method === "image" && <ImageUploadInput />}
-      {method === "prescription" && <PrescriptionUploadInput />}
+      {method === "image" && (
+        multi ? (
+          <div className="space-y-6">
+            {drugs.map((_, i) => (
+              <div key={i}>
+                <p className="text-sm font-medium text-clinical-text mb-2">Drug {i + 1}</p>
+                <ImageUploadInput
+                  onDetected={(name) => {
+                    const updated = [...drugs];
+                    updated[i] = name;
+                    onChange(updated);
+                  }}
+                />
+              </div>
+            ))}
+            {drugs.length < maxDrugs && (
+              <button
+                type="button"
+                onClick={() => onChange([...drugs, ""])}
+                className="text-sm text-clinical-teal font-medium"
+              >
+                + Add Another Drug
+              </button>
+            )}
+          </div>
+        ) : (
+          <ImageUploadInput onDetected={(name) => onChange([name])} />
+        )
+      )}
+      {method === "prescription" && (
+        <PrescriptionUploadInput
+          maxDrugs={multi ? maxDrugs : 1}
+          onDetected={(names) => onChange(names)} // prescription can list several drugs
+        />
+      )}
     </div>
   );
 }

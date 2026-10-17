@@ -145,3 +145,366 @@ TypeError: BaseCAM.__call__() missing 1 required positional argument: 'targets'
 2026-09-21 10:11:08,895 | INFO | predict_service | Model loaded successfully.
 2026-09-21 10:11:15,652 | INFO | main | MolRAG-DDI API starting up...
 2026-09-21 10:11:15,653 | INFO | main | Model and services ready.
+2026-09-24 19:30:04,679 | INFO | rag_service | Loading RAG components...
+2026-09-24 20:14:37,549 | INFO | rag_service | Loading RAG components...
+2026-09-24 20:14:49,021 | INFO | rag_service | Loading RAG components...
+2026-09-24 20:14:49,023 | INFO | rag_service | Loading RAG components...
+2026-09-24 20:15:03,152 | INFO | rag_service | Loading RAG components...
+2026-09-25 09:32:53,597 | INFO | rag_service | Loading RAG components...
+2026-09-25 09:36:23,740 | INFO | rag_service | Loading RAG components...
+2026-09-25 09:36:39,389 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 09:36:42,611 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 09:36:43,124 | INFO | predict_service | Model loaded successfully.
+2026-09-25 09:39:39,604 | INFO | prediction_router | Request received: Abacavir + Acitretin
+2026-09-25 09:39:41,382 | INFO | predict_service | Prediction: Abacavir + Acitretin -> Severe (89.64%)
+2026-09-25 09:39:47,250 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png
+2026-09-25 09:39:50,708 | INFO | rag_service | RAG explanation generated for Abacavir + Acitretin
+2026-09-25 09:43:24,041 | INFO | rag_service | Loading RAG components...
+2026-09-25 09:43:38,181 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 09:43:39,121 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 09:43:39,895 | INFO | predict_service | Model loaded successfully.
+2026-09-25 09:43:43,344 | INFO | prediction_router | Request received: Abacavir + Acitretin
+2026-09-25 09:43:44,906 | INFO | predict_service | Prediction: Abacavir + Acitretin -> Severe (89.64%)
+2026-09-25 09:43:50,995 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png
+2026-09-25 09:43:51,329 | INFO | rag_service | No exact pair match for Abacavir + Acitretin; using semantic fallback
+2026-09-25 09:43:54,437 | INFO | rag_service | RAG explanation generated for Abacavir + Acitretin
+2026-09-25 09:46:33,984 | INFO | prediction_router | Request received: Pentazocine + Topiramate
+2026-09-25 09:46:36,227 | INFO | predict_service | Prediction: Pentazocine + Topiramate -> Severe (57.79%)
+2026-09-25 09:46:41,922 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Pentazocine_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Topiramate_heatmap.png
+2026-09-25 09:46:45,582 | INFO | rag_service | RAG explanation generated for Pentazocine + Topiramate
+2026-09-25 09:58:16,197 | INFO | rag_service | Loading RAG components...
+2026-09-25 09:58:34,396 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 09:58:36,097 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 09:58:37,794 | INFO | predict_service | Model loaded successfully.
+2026-09-25 12:25:56,400 | INFO | rag_service | Loading RAG components...
+2026-09-25 12:26:12,724 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 12:26:14,331 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 12:26:16,324 | INFO | predict_service | Model loaded successfully.
+2026-09-25 12:26:43,328 | INFO | rag_service | Loading RAG components...
+2026-09-25 12:26:57,770 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 12:26:58,421 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 12:26:59,450 | INFO | predict_service | Model loaded successfully.
+2026-09-25 12:32:02,132 | INFO | rag_service | Loading RAG components...
+2026-09-25 12:32:17,318 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 12:32:20,899 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 12:32:21,475 | INFO | predict_service | Model loaded successfully.
+2026-09-25 12:34:10,798 | INFO | rag_service | Loading RAG components...
+2026-09-25 12:34:26,414 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 12:34:26,964 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 12:34:27,693 | INFO | predict_service | Model loaded successfully.
+2026-09-25 12:37:52,507 | INFO | rag_service | Loading RAG components...
+2026-09-25 12:38:08,473 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 12:38:09,012 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 12:38:09,391 | INFO | predict_service | Model loaded successfully.
+2026-09-25 19:49:26,010 | INFO | rag_service | Loading RAG components...
+2026-09-25 19:49:45,087 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-25 19:49:49,432 | INFO | predict_service | Loading model on device: cpu
+2026-09-25 19:49:51,277 | INFO | predict_service | Model loaded successfully.
+2026-09-29 09:42:35,923 | INFO | rag_service | Loading RAG components...
+2026-09-29 09:42:57,447 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 09:43:03,457 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 09:43:05,734 | INFO | predict_service | Model loaded successfully.
+2026-09-29 09:45:51,784 | INFO | rag_service | Loading RAG components...
+2026-09-29 09:46:06,018 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 09:46:06,819 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 09:46:07,462 | INFO | predict_service | Model loaded successfully.
+2026-09-29 09:53:39,682 | INFO | rag_service | Loading RAG components...
+2026-09-29 09:53:55,053 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 09:53:57,425 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 09:53:57,950 | INFO | predict_service | Model loaded successfully.
+2026-09-29 09:56:43,656 | INFO | rag_service | Loading RAG components...
+2026-09-29 09:56:57,857 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 09:56:58,475 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 09:56:59,438 | INFO | predict_service | Model loaded successfully.
+2026-09-29 09:58:05,680 | INFO | rag_service | Loading RAG components...
+2026-09-29 09:58:31,977 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 09:58:32,406 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 09:58:32,928 | INFO | predict_service | Model loaded successfully.
+2026-09-29 10:09:15,239 | INFO | prediction_router | Request received: Acitretin + Alfentanil
+2026-09-29 10:09:17,772 | INFO | predict_service | Prediction: Acitretin + Alfentanil -> Severe (99.52%)
+2026-09-29 10:09:23,217 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Alfentanil_heatmap.png
+2026-09-29 10:09:23,596 | INFO | rag_service | No exact pair match for Acitretin + Alfentanil; using semantic fallback
+2026-09-29 10:09:27,653 | INFO | rag_service | RAG explanation generated for Acitretin + Alfentanil
+2026-09-29 10:09:27,656 | ERROR | prediction_router | Internal error: name 'datetime' is not defined
+Traceback (most recent call last):
+  File "C:\MolRAG-DDI\backend\routers\prediction.py", line 45, in predict
+    "timestamp": datetime.utcnow(),
+                 ^^^^^^^^
+NameError: name 'datetime' is not defined. Did you forget to import 'datetime'?
+2026-09-29 10:16:15,904 | INFO | rag_service | Loading RAG components...
+2026-09-29 10:16:30,221 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 10:16:30,978 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 10:16:31,375 | INFO | predict_service | Model loaded successfully.
+2026-09-29 10:17:51,284 | INFO | rag_service | Loading RAG components...
+2026-09-29 10:18:05,824 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 10:18:06,581 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 10:18:07,186 | INFO | predict_service | Model loaded successfully.
+2026-09-29 10:18:09,703 | INFO | prediction_router | Request received: Acitretin + Alfentanil
+2026-09-29 10:18:11,365 | INFO | predict_service | Prediction: Acitretin + Alfentanil -> Severe (99.52%)
+2026-09-29 10:18:16,935 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Alfentanil_heatmap.png
+2026-09-29 10:18:17,189 | INFO | rag_service | No exact pair match for Acitretin + Alfentanil; using semantic fallback
+2026-09-29 10:18:19,805 | INFO | rag_service | RAG explanation generated for Acitretin + Alfentanil
+2026-09-29 10:28:46,040 | INFO | rag_service | Loading RAG components...
+2026-09-29 10:29:03,092 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 10:29:03,528 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 10:29:04,168 | INFO | predict_service | Model loaded successfully.
+2026-09-29 10:29:39,783 | INFO | rag_service | Loading RAG components...
+2026-09-29 10:29:53,908 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 10:29:54,428 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 10:29:54,827 | INFO | predict_service | Model loaded successfully.
+2026-09-29 10:41:09,467 | INFO | rag_service | Loading RAG components...
+2026-09-29 10:41:24,499 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 10:41:25,331 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 10:41:25,908 | INFO | predict_service | Model loaded successfully.
+2026-09-29 10:49:45,141 | INFO | prediction_router | Request received: Brigatinib + Buspirone
+2026-09-29 10:49:47,339 | INFO | predict_service | Prediction: Brigatinib + Buspirone -> Moderate (51.58%)
+2026-09-29 10:49:52,998 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Brigatinib_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Buspirone_heatmap.png
+2026-09-29 10:49:56,601 | INFO | rag_service | RAG explanation generated for Brigatinib + Buspirone
+2026-09-29 12:56:54,025 | INFO | rag_service | Loading RAG components...
+2026-09-29 12:57:14,743 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 12:57:15,606 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 12:57:16,412 | INFO | predict_service | Model loaded successfully.
+2026-09-29 13:00:39,768 | INFO | rag_service | Loading RAG components...
+2026-09-29 13:00:56,555 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 13:00:57,356 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 13:00:58,036 | INFO | predict_service | Model loaded successfully.
+2026-09-29 14:23:15,850 | INFO | prediction_router | Request received: Pentazocine + Topiramate
+2026-09-29 14:23:18,039 | INFO | predict_service | Prediction: Pentazocine + Topiramate -> Severe (57.79%)
+2026-09-29 14:23:23,831 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Pentazocine_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Topiramate_heatmap.png
+2026-09-29 14:23:27,227 | INFO | rag_service | RAG explanation generated for Pentazocine + Topiramate
+2026-09-29 14:56:34,235 | INFO | prediction_router | Request received: Abacavir + Topiramate
+2026-09-29 14:56:35,866 | INFO | predict_service | Prediction: Abacavir + Topiramate -> Severe (72.58%)
+2026-09-29 14:56:40,452 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Topiramate_heatmap.png
+2026-09-29 14:56:40,706 | INFO | rag_service | No exact pair match for Abacavir + Topiramate; using semantic fallback
+2026-09-29 14:56:44,617 | INFO | rag_service | RAG explanation generated for Abacavir + Topiramate
+2026-09-29 15:17:55,513 | INFO | rag_service | Loading RAG components...
+2026-09-29 15:18:11,539 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-09-29 15:18:12,093 | INFO | predict_service | Loading model on device: cpu
+2026-09-29 15:18:12,614 | INFO | predict_service | Model loaded successfully.
+2026-09-29 15:19:40,874 | INFO | prediction_router | Request received: Abacavir + Acitretin
+2026-09-29 15:19:42,509 | INFO | predict_service | Prediction: Abacavir + Acitretin -> Severe (89.64%)
+2026-09-29 15:19:46,822 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png
+2026-09-29 15:19:47,037 | INFO | rag_service | No exact pair match for Abacavir + Acitretin; using semantic fallback
+2026-09-29 15:19:49,907 | INFO | rag_service | RAG explanation generated for Abacavir + Acitretin
+2026-09-29 15:27:03,222 | INFO | prediction_router | Request received: Abacavir + Acitretin
+2026-09-29 15:27:05,080 | INFO | predict_service | Prediction: Abacavir + Acitretin -> Severe (89.64%)
+2026-09-29 15:27:10,860 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Acitretin_heatmap.png
+2026-09-29 15:27:11,244 | INFO | rag_service | No exact pair match for Abacavir + Acitretin; using semantic fallback
+2026-09-29 15:27:15,801 | INFO | rag_service | RAG explanation generated for Abacavir + Acitretin
+2026-09-29 15:28:00,605 | INFO | prediction_router | Request received: Pentazocine + Topiramate
+2026-09-29 15:28:01,979 | INFO | predict_service | Prediction: Pentazocine + Topiramate -> Severe (57.79%)
+2026-09-29 15:28:08,880 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Pentazocine_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Topiramate_heatmap.png
+2026-09-29 15:28:10,032 | INFO | rag_service | RAG explanation generated for Pentazocine + Topiramate
+2026-10-01 09:47:14,135 | INFO | rag_service | Loading RAG components...
+2026-10-01 09:47:30,345 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-01 09:47:34,081 | INFO | predict_service | Loading model on device: cpu
+2026-10-01 09:47:34,827 | INFO | predict_service | Model loaded successfully.
+2026-10-01 18:08:22,844 | INFO | rag_service | Loading RAG components...
+2026-10-01 18:08:33,959 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-01 18:08:36,127 | INFO | predict_service | Loading model on device: cpu
+2026-10-01 18:08:36,745 | INFO | predict_service | Model loaded successfully.
+2026-10-02 09:46:41,588 | INFO | rag_service | Loading RAG components...
+2026-10-02 09:46:56,557 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-02 09:46:59,785 | INFO | predict_service | Loading model on device: cpu
+2026-10-02 09:47:01,635 | INFO | predict_service | Model loaded successfully.
+2026-10-02 09:53:04,109 | INFO | prediction_router | Request received: Warfarin + Ibuprofen
+2026-10-02 09:53:06,620 | INFO | predict_service | Prediction: Warfarin + Ibuprofen -> Moderate (61.58%)
+2026-10-02 09:53:12,130 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Warfarin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Ibuprofen_heatmap.png
+2026-10-02 09:53:17,206 | INFO | rag_service | RAG explanation generated for Warfarin + Ibuprofen
+2026-10-02 10:03:19,887 | INFO | prediction_router | Request received: abacavir + Ibuprofen
+2026-10-02 10:03:19,896 | WARNING | prediction_router | Validation failed: Drug not found: 'abacavir'
+2026-10-02 10:03:34,109 | INFO | prediction_router | Request received: Warfarin + Tramadol
+2026-10-02 10:03:36,035 | INFO | predict_service | Prediction: Warfarin + Tramadol -> Moderate (63.19%)
+2026-10-02 10:03:41,376 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Warfarin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Tramadol_heatmap.png
+2026-10-02 10:03:44,394 | INFO | rag_service | RAG explanation generated for Warfarin + Tramadol
+2026-10-02 10:06:21,601 | INFO | prediction_router | Request received: Warfarin + Tramadol
+2026-10-02 10:06:23,165 | INFO | predict_service | Prediction: Warfarin + Tramadol -> Moderate (63.19%)
+2026-10-02 10:06:28,957 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Warfarin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Tramadol_heatmap.png
+2026-10-02 10:06:31,714 | INFO | rag_service | RAG explanation generated for Warfarin + Tramadol
+2026-10-02 10:09:28,998 | INFO | rag_service | Loading RAG components...
+2026-10-02 10:09:45,039 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-02 10:09:47,277 | INFO | predict_service | Loading model on device: cpu
+2026-10-02 10:09:47,784 | INFO | predict_service | Model loaded successfully.
+2026-10-02 10:10:28,743 | INFO | rag_service | Loading RAG components...
+2026-10-02 10:10:39,266 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-02 10:10:39,601 | INFO | predict_service | Loading model on device: cpu
+2026-10-02 10:10:40,100 | INFO | predict_service | Model loaded successfully.
+2026-10-02 10:10:59,395 | INFO | prediction_router | Request received: Amoxicillin + Lisinopril
+2026-10-02 10:11:01,165 | INFO | predict_service | Prediction: Amoxicillin + Lisinopril -> Moderate (66.15%)
+2026-10-02 10:11:06,948 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Amoxicillin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Lisinopril_heatmap.png
+2026-10-02 10:11:07,202 | INFO | rag_service | No exact pair match for Amoxicillin + Lisinopril; using semantic fallback
+2026-10-02 10:11:10,155 | INFO | rag_service | RAG explanation generated for Amoxicillin + Lisinopril
+2026-10-02 10:19:10,871 | INFO | rag_service | Loading RAG components...
+2026-10-02 10:19:26,070 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-02 10:19:26,888 | INFO | predict_service | Loading model on device: cpu
+2026-10-02 10:19:27,944 | INFO | predict_service | Model loaded successfully.
+2026-10-02 10:20:11,778 | INFO | rag_service | Loading RAG components...
+2026-10-02 10:20:28,373 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-02 10:20:29,150 | INFO | predict_service | Loading model on device: cpu
+2026-10-02 10:20:29,762 | INFO | predict_service | Model loaded successfully.
+2026-10-02 10:22:00,341 | INFO | rag_service | Loading RAG components...
+2026-10-02 10:22:18,670 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-02 10:22:19,319 | INFO | predict_service | Loading model on device: cpu
+2026-10-02 10:22:19,947 | INFO | predict_service | Model loaded successfully.
+2026-10-02 10:23:34,488 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-03 16:21:46,666 | INFO | rag_service | Loading RAG components...
+2026-10-03 16:22:07,498 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-03 16:22:12,652 | INFO | predict_service | Loading model on device: cpu
+2026-10-03 16:22:14,888 | INFO | predict_service | Model loaded successfully.
+2026-10-03 16:22:28,683 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-03 18:01:09,328 | INFO | prediction_router | Request received: Abacavir + Aspirin
+2026-10-03 18:01:09,345 | WARNING | prediction_router | Validation failed: Drug not found: 'Aspirin'
+2026-10-03 18:01:25,435 | INFO | prediction_router | Request received: Abacavir + Warfarin
+2026-10-03 18:01:28,242 | INFO | predict_service | Prediction: Abacavir + Warfarin -> Moderate (52.59%)
+2026-10-03 18:01:33,729 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Abacavir_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Warfarin_heatmap.png
+2026-10-03 18:01:33,974 | INFO | rag_service | No exact pair match for Abacavir + Warfarin; using semantic fallback
+2026-10-03 18:01:38,111 | INFO | rag_service | RAG explanation generated for Abacavir + Warfarin
+2026-10-03 18:02:38,263 | INFO | prediction_router | Request received: TRANEXAMIC ACID + LEVOCETIRIZINE
+2026-10-03 18:02:38,269 | WARNING | prediction_router | Validation failed: Drug not found: 'TRANEXAMIC ACID'
+2026-10-03 18:02:42,455 | INFO | prediction_router | Request received: TRANEXAMIC ACID + LEVOCETIRIZINE
+2026-10-03 18:02:42,457 | WARNING | prediction_router | Validation failed: Drug not found: 'TRANEXAMIC ACID'
+2026-10-03 18:16:04,538 | INFO | rag_service | Loading RAG components...
+2026-10-03 18:16:19,295 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-03 18:16:21,920 | INFO | predict_service | Loading model on device: cpu
+2026-10-03 18:16:22,998 | INFO | predict_service | Model loaded successfully.
+2026-10-03 18:16:31,714 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 09:47:12,379 | INFO | rag_service | Loading RAG components...
+2026-10-04 09:47:33,977 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-04 09:47:36,459 | INFO | predict_service | Loading model on device: cpu
+2026-10-04 09:47:37,225 | INFO | predict_service | Model loaded successfully.
+2026-10-04 09:47:48,817 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 11:11:13,145 | INFO | rag_service | Loading RAG components...
+2026-10-04 11:11:26,687 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-04 11:11:30,477 | INFO | predict_service | Loading model on device: cpu
+2026-10-04 11:11:32,053 | INFO | predict_service | Model loaded successfully.
+2026-10-04 11:11:47,668 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 11:12:36,952 | INFO | rag_service | Loading RAG components...
+2026-10-04 11:12:54,708 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-04 11:12:55,562 | INFO | predict_service | Loading model on device: cpu
+2026-10-04 11:12:56,862 | INFO | predict_service | Model loaded successfully.
+2026-10-04 11:13:08,833 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 11:17:19,929 | INFO | rag_service | Loading RAG components...
+2026-10-04 11:17:33,876 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-04 11:17:34,697 | INFO | predict_service | Loading model on device: cpu
+2026-10-04 11:17:35,354 | INFO | predict_service | Model loaded successfully.
+2026-10-04 11:17:40,070 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 11:18:17,025 | INFO | prediction_router | Request received: Aceclofenac + Ibuprofen (resolved: Aceclofenac + Ibuprofen)
+2026-10-04 11:18:18,783 | INFO | predict_service | Prediction: Aceclofenac + Ibuprofen -> Moderate (64.54%)
+2026-10-04 11:18:24,735 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Aceclofenac_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Ibuprofen_heatmap.png
+2026-10-04 11:18:27,054 | INFO | rag_service | RAG explanation generated for Aceclofenac + Ibuprofen
+2026-10-04 11:22:00,288 | INFO | rag_service | Loading RAG components...
+2026-10-04 11:22:11,776 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-04 11:22:12,358 | INFO | predict_service | Loading model on device: cpu
+2026-10-04 11:22:12,906 | INFO | predict_service | Model loaded successfully.
+2026-10-04 11:22:17,895 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 11:22:17,978 | INFO | prediction_router | Request received: Aceclofenac + Ibuprofen (resolved: Aceclofenac + Ibuprofen)
+2026-10-04 11:22:19,662 | INFO | predict_service | Prediction: Aceclofenac + Ibuprofen -> Moderate (64.54%)
+2026-10-04 11:22:24,791 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Aceclofenac_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Ibuprofen_heatmap.png
+2026-10-04 11:22:32,935 | INFO | rag_service | RAG explanation generated for Aceclofenac + Ibuprofen
+2026-10-04 17:43:45,237 | INFO | rag_service | Loading RAG components...
+2026-10-04 17:44:05,515 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-04 17:44:06,795 | INFO | predict_service | Loading model on device: cpu
+2026-10-04 17:44:08,516 | INFO | predict_service | Model loaded successfully.
+2026-10-04 17:44:24,644 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-04 17:52:39,080 | INFO | prediction_router | Request received: Aceclofenac + Ibuprofen (resolved: Aceclofenac + Ibuprofen)
+2026-10-04 17:52:41,824 | INFO | predict_service | Prediction: Aceclofenac + Ibuprofen -> Moderate (64.54%)
+2026-10-04 17:52:47,546 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Aceclofenac_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Ibuprofen_heatmap.png
+2026-10-04 17:53:05,263 | INFO | rag_service | RAG explanation generated for Aceclofenac + Ibuprofen
+2026-10-04 19:05:51,268 | INFO | prediction_router | Request received: Amoxicillin + Tramadol (resolved: Amoxicillin + Tramadol)
+2026-10-04 19:05:53,360 | INFO | predict_service | Prediction: Amoxicillin + Tramadol -> Moderate (62.99%)
+2026-10-04 19:05:59,006 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Amoxicillin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Tramadol_heatmap.png
+2026-10-04 19:05:59,248 | INFO | rag_service | No exact pair match for Amoxicillin + Tramadol; using semantic fallback
+2026-10-04 19:06:11,121 | INFO | rag_service | RAG explanation generated for Amoxicillin + Tramadol
+2026-10-04 19:12:50,962 | INFO | prediction_router | Request received: Simvastatin + Warfarin (resolved: Simvastatin + Warfarin)
+2026-10-04 19:12:52,984 | INFO | predict_service | Prediction: Simvastatin + Warfarin -> Moderate (61.47%)
+2026-10-04 19:12:59,020 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Simvastatin_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Warfarin_heatmap.png
+2026-10-04 19:13:10,081 | INFO | rag_service | RAG explanation generated for Simvastatin + Warfarin
+2026-10-05 15:40:43,512 | INFO | rag_service | Loading RAG components...
+2026-10-05 15:40:58,045 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-05 15:41:01,192 | INFO | predict_service | Loading model on device: cpu
+2026-10-05 15:41:01,605 | INFO | predict_service | Model loaded successfully.
+2026-10-05 15:41:10,333 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-05 15:53:49,602 | INFO | rag_service | Loading RAG components...
+2026-10-05 15:54:02,673 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-05 15:54:03,393 | INFO | predict_service | Loading model on device: cpu
+2026-10-05 15:54:04,065 | INFO | predict_service | Model loaded successfully.
+2026-10-05 15:54:08,666 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-05 19:17:46,544 | INFO | rag_service | Loading RAG components...
+2026-10-05 19:18:03,787 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-05 19:18:09,149 | INFO | predict_service | Loading model on device: cpu
+2026-10-05 19:18:10,122 | INFO | predict_service | Model loaded successfully.
+2026-10-05 19:18:19,795 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-05 19:18:28,505 | INFO | prediction_router | Request received: Aspirin + Warfarin (resolved: Aspirin + Warfarin)
+2026-10-05 19:18:28,505 | WARNING | prediction_router | Validation failed: Drug not found: 'Aspirin'
+2026-10-05 19:20:25,596 | INFO | prediction_router | Request received: Aspirin + Warfarin (resolved: Aspirin + Warfarin)
+2026-10-05 19:20:25,597 | WARNING | prediction_router | Validation failed: Drug not found: 'Aspirin'
+2026-10-06 11:56:06,198 | INFO | rag_service | Loading RAG components...
+2026-10-06 11:56:28,431 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-06 11:56:33,505 | INFO | predict_service | Loading model on device: cpu
+2026-10-06 11:56:35,501 | INFO | predict_service | Model loaded successfully.
+2026-10-06 11:56:48,928 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-06 11:57:45,126 | INFO | prediction_router | Request received: Tramadol + Warfarin (resolved: Tramadol + Warfarin)
+2026-10-06 11:57:51,447 | INFO | predict_service | Prediction: Tramadol + Warfarin -> Moderate (46.36%)
+2026-10-06 11:58:11,639 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Tramadol_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Warfarin_heatmap.png
+2026-10-06 11:58:44,519 | INFO | rag_service | RAG explanation generated for Tramadol + Warfarin
+2026-10-06 12:01:56,706 | INFO | prediction_router | Request received: Aspirin + Ibuprofen (resolved: Aspirin + Ibuprofen)
+2026-10-06 12:01:56,719 | WARNING | prediction_router | Validation failed: Drug not found: 'Aspirin'
+2026-10-06 12:56:33,053 | INFO | rag_service | Loading RAG components...
+2026-10-06 12:56:47,370 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-06 12:56:47,991 | INFO | predict_service | Loading model on device: cpu
+2026-10-06 12:56:48,641 | INFO | predict_service | Model loaded successfully.
+2026-10-06 12:56:54,391 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-07 09:54:42,601 | INFO | rag_service | Loading RAG components...
+2026-10-07 09:55:06,328 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-07 09:55:11,073 | INFO | predict_service | Loading model on device: cpu
+2026-10-07 09:55:12,584 | INFO | predict_service | Model loaded successfully.
+2026-10-07 09:55:27,173 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-09 18:34:32,917 | INFO | rag_service | Loading RAG components...
+2026-10-09 18:34:59,499 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-09 18:35:06,476 | INFO | predict_service | Loading model on device: cpu
+2026-10-09 18:35:09,034 | INFO | predict_service | Model loaded successfully.
+2026-10-09 18:35:34,450 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-09 19:00:47,523 | INFO | prediction_router | Request received: Astemizole + Radium Ra 223 dichloride (resolved: Astemizole + Radium Ra 223 dichloride)
+2026-10-09 19:00:56,163 | INFO | predict_service | Prediction: Astemizole + Radium Ra 223 dichloride -> Moderate (65.74%)
+2026-10-09 19:01:16,113 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Astemizole_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Radium Ra 223 dichloride_heatmap.png
+2026-10-09 19:01:17,156 | INFO | rag_service | No exact pair match for Astemizole + Radium Ra 223 dichloride; using semantic fallback
+2026-10-09 19:01:41,822 | INFO | rag_service | RAG explanation generated for Astemizole + Radium Ra 223 dichloride
+2026-10-11 09:57:53,709 | INFO | rag_service | Loading RAG components...
+2026-10-11 09:58:04,515 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-11 09:58:06,690 | INFO | predict_service | Loading model on device: cpu
+2026-10-11 09:58:07,026 | INFO | predict_service | Model loaded successfully.
+2026-10-11 09:58:12,323 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-12 18:17:50,659 | INFO | rag_service | Loading RAG components...
+2026-10-12 18:18:07,540 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-12 18:18:12,780 | INFO | predict_service | Loading model on device: cpu
+2026-10-12 18:18:13,947 | INFO | predict_service | Model loaded successfully.
+2026-10-12 18:18:28,223 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-12 18:26:09,531 | INFO | rag_service | Loading RAG components...
+2026-10-12 18:26:28,297 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-12 18:26:29,620 | INFO | predict_service | Loading model on device: cpu
+2026-10-12 18:26:31,346 | INFO | predict_service | Model loaded successfully.
+2026-10-12 18:26:40,941 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-12 18:27:27,458 | INFO | rag_service | Loading RAG components...
+2026-10-12 18:27:42,397 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-12 18:27:43,155 | INFO | predict_service | Loading model on device: cpu
+2026-10-12 18:27:44,159 | INFO | predict_service | Model loaded successfully.
+2026-10-12 18:27:55,707 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-12 19:04:50,247 | INFO | rag_service | Loading RAG components...
+2026-10-12 19:05:05,712 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-12 19:05:06,534 | INFO | predict_service | Loading model on device: cpu
+2026-10-12 19:05:07,822 | INFO | predict_service | Model loaded successfully.
+2026-10-12 19:05:18,508 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-14 11:13:32,332 | INFO | rag_service | Loading RAG components...
+2026-10-14 11:13:53,845 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-14 11:13:59,233 | INFO | predict_service | Loading model on device: cpu
+2026-10-14 11:14:01,087 | INFO | predict_service | Model loaded successfully.
+2026-10-14 11:14:21,772 | INFO | ocr_router | EasyOCR reader loaded.
+2026-10-14 11:19:36,789 | INFO | prediction_router | Request received: Halazepam + Paliperidone (resolved: Halazepam + Paliperidone)
+2026-10-14 11:19:42,839 | INFO | predict_service | Prediction: Halazepam + Paliperidone -> Moderate (51.66%)
+2026-10-14 11:20:00,492 | INFO | gradcam_service | Grad-CAM saved: C:\MolRAG-DDI\backend\outputs\gradcam\Halazepam_heatmap.png, C:\MolRAG-DDI\backend\outputs\gradcam\Paliperidone_heatmap.png
+2026-10-14 11:20:25,398 | INFO | rag_service | RAG explanation generated for Halazepam + Paliperidone
+2026-10-17 09:24:54,499 | INFO | rag_service | Loading RAG components...
+2026-10-17 09:25:07,615 | INFO | rag_service | RAG ready: 191541 evidence vectors loaded.
+2026-10-17 09:25:09,369 | INFO | predict_service | Loading model on device: cpu
+2026-10-17 09:25:09,909 | INFO | predict_service | Model loaded successfully.
+2026-10-17 09:25:15,966 | INFO | ocr_router | EasyOCR reader loaded.

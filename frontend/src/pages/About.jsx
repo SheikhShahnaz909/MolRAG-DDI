@@ -1,5 +1,7 @@
 import BackArrow from "../components/BackArrow";
 
+// NOTE: roles below are carried over from the previous version of this page.
+// Please confirm they match what each member actually worked on.
 const TEAM = [
   { name: "Rafa", role: "API Integration" },
   { name: "Rehmat Fatima B Kulkarni", role: "Model Development" },
@@ -7,10 +9,15 @@ const TEAM = [
   { name: "Uzma", role: "Frontend UI" },
 ];
 
-const TOOLS = [
-  { tool: "React (via Vite)", purpose: "Project setup / build tooling" },
-  { tool: "Tailwind CSS", purpose: "Styling and layout" },
-  { tool: "Lucide React", purpose: "Icons" },
+const TECH = [
+  { layer: "Prediction model", tool: "PyTorch, ResNet50 fusion CNN, CORAL ordinal head", purpose: "Predicts Safe / Moderate / Severe from molecular images and chemical features" },
+  { layer: "Chemistry", tool: "RDKit", purpose: "Molecule images, Lipinski descriptors and Morgan fingerprints" },
+  { layer: "Explainability", tool: "Grad-CAM", purpose: "Heatmaps showing influential regions of each molecule" },
+  { layer: "Evidence and explanation", tool: "Sentence-BERT, FAISS, FLAN-T5", purpose: "Retrieves interaction evidence and writes a plain-language explanation" },
+  { layer: "Drug identification", tool: "EasyOCR, RapidFuzz", purpose: "Reads medicine photos and prescriptions and matches drug names" },
+  { layer: "Backend", tool: "FastAPI, Node.js (Express)", purpose: "Prediction APIs; OTP, login and password reset" },
+  { layer: "Database", tool: "MongoDB Atlas", purpose: "Users, drug catalogue, evidence and prediction history" },
+  { layer: "Frontend", tool: "React (Vite), Tailwind CSS, Lucide React", purpose: "Responsive web interface" },
 ];
 
 export default function About() {
@@ -22,10 +29,13 @@ export default function About() {
       </h1>
       <p className="text-clinical-text leading-relaxed mb-10">
         MolRAG-DDI is a retrieval-augmented framework for drug-drug interaction
-        prediction, combining Graph Neural Networks, Large Language Models, and
-        Retrieval-Augmented Generation to give healthcare professionals
-        accurate, explainable predictions backed by real biomedical evidence
-        from sources like DrugBank and PubMed.
+        prediction. It turns each drug into a molecular image with chemical
+        descriptors, predicts the severity of an interaction as Safe, Moderate or
+        Severe, and shows which parts of the molecules influenced the result.
+        The prediction is supported by evidence retrieved from a large collection
+        of interaction records and by a plain-language explanation. It is meant
+        for education and decision support and does not replace professional
+        medical advice.
       </p>
 
       <h2 className="font-display font-semibold text-xl text-clinical-navy mb-4">Team</h2>
@@ -39,20 +49,22 @@ export default function About() {
       </div>
 
       <h2 className="font-display font-semibold text-xl text-clinical-navy mb-4">
-        Frontend Tools
+        Technology
       </h2>
-      <div className="card overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="card overflow-x-auto">
+        <table className="w-full text-sm min-w-[520px]">
           <thead>
             <tr className="bg-clinical-navy text-white text-left">
-              <th className="px-5 py-3 font-medium">Tool</th>
+              <th className="px-5 py-3 font-medium">Layer</th>
+              <th className="px-5 py-3 font-medium">Tools</th>
               <th className="px-5 py-3 font-medium">Purpose</th>
             </tr>
           </thead>
           <tbody>
-            {TOOLS.map((t) => (
-              <tr key={t.tool} className="border-t border-clinical-border">
-                <td className="px-5 py-3 font-medium text-clinical-navy">{t.tool}</td>
+            {TECH.map((t) => (
+              <tr key={t.layer} className="border-t border-clinical-border align-top">
+                <td className="px-5 py-3 font-medium text-clinical-navy">{t.layer}</td>
+                <td className="px-5 py-3 text-clinical-text">{t.tool}</td>
                 <td className="px-5 py-3 text-clinical-muted">{t.purpose}</td>
               </tr>
             ))}

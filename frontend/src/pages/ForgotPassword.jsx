@@ -1,11 +1,59 @@
+import { AUTH_URL } from "../config";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { KeyRound } from "lucide-react";
-import BackArrow from "../components/BackArrow";
+import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, KeyRound, Lock, Mail, ShieldCheck } from "lucide-react";
+import AuthLayout from "../components/AuthLayout";
+import { AuthInput, AuthMessage, AuthButton, PasswordStrength } from "../components/AuthKit";
+
+const STEPS = ["Email", "Verify", "New password"];
+
+function Stepper({ step }) {
+  return (
+    <div className="flex items-center mb-7">
+      {STEPS.map((label, i) => {
+        const n = i + 1;
+        const done = step > n;
+        const active = step === n;
+        return (
+          <div key={label} className="flex items-center flex-1 last:flex-none">
+            <div className="flex flex-col items-center gap-1.5">
+              <motion.div
+                animate={{ scale: active ? 1.1 : 1 }}
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-colors
+                  ${done ? "bg-clinical-teal border-clinical-teal text-white"
+                    : active ? "border-clinical-teal text-clinical-teal bg-white"
+                    : "border-clinical-border text-clinical-muted bg-white"}`}
+              >
+                {done ? <Check className="w-4 h-4" /> : n}
+              </motion.div>
+              <span className={`text-xs ${active ? "text-clinical-navy font-medium" : "text-clinical-muted"}`}>{label}</span>
+            </div>
+            {i < STEPS.length - 1 && (
+              <div className="flex-1 h-0.5 bg-clinical-border mx-2 mb-5 relative overflow-hidden rounded">
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-clinical-teal"
+                  initial={false}
+                  animate={{ width: step > n ? "100%" : "0%" }}
+                  transition={{ duration: 0.4 }}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const slide = {
+  initial: { opacity: 0, x: 24 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -24 },
+  transition: { duration: 0.25, ease: "easeOut" },
+};
 
 export default function ForgotPassword() {
-  const navigate = useNavigate();
-
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -15,6 +63,7 @@ export default function ForgotPassword() {
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   // -------------------------
   // SEND OTP
@@ -32,14 +81,10 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/otp/send", {
+      const response = await fetch(`${AUTH_URL}/api/otp/send`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
       });
 
       const data = await response.json();
@@ -52,9 +97,7 @@ export default function ForgotPassword() {
       setStep(2);
     } catch (err) {
       console.error(err);
-      setError(
-        "Could not send OTP. Make sure your OTP server is running."
-      );
+      setError("Could not send OTP. Make sure your OTP server is running.");
     } finally {
       setLoading(false);
     }
@@ -76,15 +119,10 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/otp/verify", {
+      const response = await fetch(`${AUTH_URL}/api/otp/verify`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-          otp: otp.trim(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), otp: otp.trim() }),
       });
 
       const data = await response.json();
@@ -112,14 +150,10 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/otp/send", {
+      const response = await fetch(`${AUTH_URL}/api/otp/send`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
       });
 
       const data = await response.json();
@@ -141,177 +175,166 @@ export default function ForgotPassword() {
   // -------------------------
   // RESET PASSWORD
   // -------------------------
-  function resetPassword(e) {
+  async function resetPassword(e) {
     e.preventDefault();
 
     if (!newPass || !confirmPass) {
       setError("Please enter both password fields.");
       return;
     }
-
     if (newPass !== confirmPass) {
       setError("Passwords do not match.");
       return;
     }
+    if (newPass.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
 
     setError("");
+    setLoading(true);
 
-    /*
-      IMPORTANT:
-      Your OTP backend only verifies the email.
-      Your friend's main backend must provide an API
-      to actually update the password in MongoDB.
+    try {
+      const response = await fetch(`${AUTH_URL}/api/auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), newPassword: newPass }),
+      });
 
-      For now, we will NOT pretend that the password
-      has been saved.
-    */
+      const data = await response.json();
 
-    setNote(
-      "Email verified. Password update needs to be connected to the main backend."
-    );
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Unable to reset password.");
+      }
+
+      setNote("Password updated successfully. You can now log in.");
+      setDone(true);
+    } catch (err) {
+      setError(err.message || "Unable to reset password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
+  const titles = {
+    1: ["Reset password", "We'll email you a 6-digit code."],
+    2: ["Check your email", `Enter the code we sent to ${email || "your email"}.`],
+    3: ["Set a new password", "Choose something you haven't used before."],
+  };
+  const [title, subtitle] = done ? ["All set", "Your password has been updated."] : titles[step];
+
   return (
-    <div className="max-w-md mx-auto px-6 py-12">
-      <BackArrow />
-
-      <h1 className="font-display text-3xl font-semibold text-clinical-navy mb-8">
-        Reset Password
-      </h1>
-
-      <div className="card p-8 space-y-5">
-
-        {/* SUCCESS / INFORMATION MESSAGE */}
-        {note && (
-          <p className="text-sm text-severity-moderate">
-            {note}
-          </p>
-        )}
-
-        {/* ERROR */}
-        {error && (
-          <p className="text-sm text-severity-severe">
-            {error}
-          </p>
-        )}
-
-        {/* STEP 1 */}
-        {step === 1 && (
-          <form onSubmit={requestOtp} className="space-y-5">
-
-            <div>
-              <label className="block text-sm font-medium text-clinical-text mb-2">
-                Registered Email
-              </label>
-
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your registered email"
-                className="w-full px-4 py-3 rounded-lg border border-clinical-border
-                           focus:outline-none focus:ring-2 focus:ring-clinical-teal text-sm"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full justify-center"
+    <AuthLayout
+      back
+      heading="Back in three quick steps."
+      blurb="Confirm your email, enter the code, and choose a new password."
+      title={title}
+      subtitle={subtitle}
+    >
+      <div className="card p-7 sm:p-9">
+        {done ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 220, damping: 14 }}
+              className="w-20 h-20 mx-auto rounded-full bg-severity-safeBg flex items-center justify-center"
             >
-              {loading ? "Sending..." : "Send OTP"}
-              {!loading && <KeyRound className="w-4 h-4" />}
-            </button>
+              <svg viewBox="0 0 24 24" className="w-10 h-10 text-severity-safe" fill="none" stroke="currentColor"
+                   strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <motion.path d="M5 12.5l4.5 4.5L19 7.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+                             transition={{ delay: 0.25, duration: 0.5 }} />
+              </svg>
+            </motion.div>
+            <p className="text-sm text-clinical-muted mt-5">{note}</p>
+            <Link to="/login" className="btn-primary w-full justify-center mt-6">Go to Log In</Link>
+          </motion.div>
+        ) : (
+          <>
+            <Stepper step={step} />
+            <AuthMessage error={error} note={note} />
 
-          </form>
+            <AnimatePresence mode="wait" initial={false}>
+              {/* STEP 1 */}
+              {step === 1 && (
+                <motion.form key="s1" {...slide} onSubmit={requestOtp} className="space-y-5 mt-5">
+                  <AuthInput
+                    icon={Mail}
+                    label="Registered Email"
+                    type="email"
+                    placeholder="Enter your registered email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <AuthButton loading={loading} loadingText="Sending...">
+                    Send OTP <KeyRound className="w-4 h-4" />
+                  </AuthButton>
+                </motion.form>
+              )}
+
+              {/* STEP 2 */}
+              {step === 2 && (
+                <motion.form key="s2" {...slide} onSubmit={verifyOtp} className="space-y-5 mt-5">
+                  <AuthInput
+                    icon={ShieldCheck}
+                    label="Enter OTP"
+                    placeholder="000000"
+                    inputMode="numeric"
+                    maxLength={6}
+                    className="text-center font-mono text-lg tracking-[0.4em]"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    right={
+                      <button
+                        type="button"
+                        onClick={resendOtp}
+                        disabled={loading}
+                        className="text-xs text-clinical-teal font-medium hover:underline disabled:opacity-60"
+                      >
+                        Resend OTP
+                      </button>
+                    }
+                  />
+                  <AuthButton loading={loading} loadingText="Verifying...">Verify OTP</AuthButton>
+                </motion.form>
+              )}
+
+              {/* STEP 3 */}
+              {step === 3 && (
+                <motion.form key="s3" {...slide} onSubmit={resetPassword} className="space-y-5 mt-5">
+                  <AuthInput
+                    icon={Lock}
+                    label="New Password"
+                    type="password"
+                    placeholder="Enter new password"
+                    autoComplete="new-password"
+                    value={newPass}
+                    onChange={(e) => setNewPass(e.target.value)}
+                  />
+                  <PasswordStrength value={newPass} />
+                  <AuthInput
+                    icon={ShieldCheck}
+                    label="Confirm Password"
+                    type="password"
+                    placeholder="Confirm new password"
+                    autoComplete="new-password"
+                    value={confirmPass}
+                    onChange={(e) => setConfirmPass(e.target.value)}
+                  />
+                  <AuthButton loading={loading} loadingText="Updating...">Update Password</AuthButton>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </>
         )}
-
-        {/* STEP 2 */}
-        {step === 2 && (
-          <form onSubmit={verifyOtp} className="space-y-5">
-
-            <div>
-              <label className="block text-sm font-medium text-clinical-text mb-2">
-                Enter OTP
-              </label>
-
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter 6-digit OTP"
-                maxLength={6}
-                className="w-full px-4 py-3 rounded-lg border border-clinical-border
-                           focus:outline-none focus:ring-2 focus:ring-clinical-teal
-                           text-sm font-mono"
-              />
-            </div>
-
-            <button
-              type="button"
-              onClick={resendOtp}
-              disabled={loading}
-              className="text-xs text-clinical-teal font-medium"
-            >
-              {loading ? "Sending..." : "Resend OTP"}
-            </button>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full justify-center"
-            >
-              {loading ? "Verifying..." : "Verify OTP"}
-            </button>
-
-          </form>
-        )}
-
-        {/* STEP 3 */}
-        {step === 3 && (
-          <form onSubmit={resetPassword} className="space-y-5">
-
-            <div>
-              <label className="block text-sm font-medium text-clinical-text mb-2">
-                New Password
-              </label>
-
-              <input
-                type="password"
-                value={newPass}
-                onChange={(e) => setNewPass(e.target.value)}
-                placeholder="Enter new password"
-                className="w-full px-4 py-3 rounded-lg border border-clinical-border
-                           focus:outline-none focus:ring-2 focus:ring-clinical-teal text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-clinical-text mb-2">
-                Confirm Password
-              </label>
-
-              <input
-                type="password"
-                value={confirmPass}
-                onChange={(e) => setConfirmPass(e.target.value)}
-                placeholder="Confirm new password"
-                className="w-full px-4 py-3 rounded-lg border border-clinical-border
-                           focus:outline-none focus:ring-2 focus:ring-clinical-teal text-sm"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="btn-primary w-full justify-center"
-            >
-              Update Password
-            </button>
-
-          </form>
-        )}
-
       </div>
-    </div>
+
+      {!done && (
+        <p className="text-sm text-center text-clinical-muted mt-5">
+          Remembered it?{" "}
+          <Link to="/login" className="text-clinical-teal font-medium hover:underline">Back to log in</Link>
+        </p>
+      )}
+    </AuthLayout>
   );
 }

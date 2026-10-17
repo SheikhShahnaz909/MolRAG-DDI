@@ -2,7 +2,10 @@ import { Plus } from "lucide-react";
 import DrugAutocomplete from "./DrugAutocomplete";
 
 // List of drug-name fields with add/remove, each backed by DrugAutocomplete.
-export default function MultiDrugNameInput({ drugs, onChange, minDrugs = 2, maxDrugs = 10 }) {
+// drugList: optional override, passed through to each DrugAutocomplete (see
+// that component for why -- lets a page suggest from a different set, e.g.
+// only predictable drugs, instead of the default static list).
+export default function MultiDrugNameInput({ drugs, onChange, minDrugs = 2, maxDrugs = 10, drugList }) {
   function updateDrug(i, val) {
     const next = [...drugs];
     next[i] = val;
@@ -27,6 +30,7 @@ export default function MultiDrugNameInput({ drugs, onChange, minDrugs = 2, maxD
             value={d}
             onChange={(val) => updateDrug(i, val)}
             onRemove={drugs.length > minDrugs ? () => removeDrug(i) : undefined}
+            drugList={drugList}
           />
         </div>
       ))}
