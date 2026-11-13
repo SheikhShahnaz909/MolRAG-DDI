@@ -4,15 +4,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Colour tokens as "R G B" so Tailwind opacity modifiers keep working. */
+:root {
+  --bg: 247 249 251;
+  --surface: 255 255 255;
+  --cloud: 241 244 248;
+  --mist: 232 238 244;
+  --sky: 220 232 242;
+  --border: 226 232 240;
+  --text: 30 41 59;
+  --muted: 100 116 139;
+  --ink: 15 42 67;
+  --navy: 15 42 67;
+  --navy-light: 27 59 92;
+  --teal: 14 124 134;
+  --teal-light: 18 162 174;
+  --safe: 31 157 85;
+  --safe-bg: 231 247 238;
+  --moderate: 217 119 6;
+  --moderate-bg: 254 243 226;
+  --severe: 220 38 38;
+  --severe-bg: 253 236 236;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: 10 17 27;
+  --surface: 17 27 41;
+  --cloud: 22 33 49;
+  --mist: 28 41 59;
+  --sky: 32 48 69;
+  --border: 40 55 75;
+  --text: 226 232 240;
+  --muted: 148 163 184;
+  --ink: 232 240 248;
+  --navy: 22 52 84;
+  --navy-light: 32 72 108;
+  --teal: 20 150 162;
+  --teal-light: 60 190 200;
+  --safe: 52 190 110;
+  --safe-bg: 18 54 38;
+  --moderate: 245 158 11;
+  --moderate-bg: 70 46 12;
+  --severe: 248 113 113;
+  --severe-bg: 74 26 26;
+}
+
 body {
   @apply text-clinical-text font-body antialiased;
   margin: 0;
   min-height: 100vh;
-  background-color: #F7F9FB;
+  background-color: rgb(var(--bg));
   /* soft blue-gray washes behind every page */
   background-image:
-    radial-gradient(60rem 40rem at 90% -10%, rgba(18, 162, 174, 0.10), transparent 60%),
-    radial-gradient(50rem 40rem at -10% 15%, rgba(27, 59, 92, 0.08), transparent 60%);
+    radial-gradient(60rem 40rem at 90% -10%, rgb(var(--teal-light) / 0.10), transparent 60%),
+    radial-gradient(50rem 40rem at -10% 15%, rgb(var(--navy-light) / 0.10), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -20,17 +66,24 @@ h1, h2, h3 {
   @apply font-display tracking-tight;
 }
 
-/* Kept for existing pages: now a very faint molecular grid instead of dots */
+/* Kept for existing pages: a very faint molecular grid */
 .molecular-bg {
   background-image:
-    linear-gradient(rgba(15, 42, 67, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 42, 67, 0.035) 1px, transparent 1px);
+    linear-gradient(rgb(var(--ink) / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--ink) / 0.035) 1px, transparent 1px);
   background-size: 56px 56px;
+}
+
+/* The logo has dark parts, so it sits on a light disc in dark mode. */
+.dark img[src="/logo.png"] {
+  background: #fff;
+  border-radius: 9999px;
+  padding: 0.2rem;
 }
 
 /* Frosted glass surface used by every page */
 .card {
-  @apply bg-white/80 backdrop-blur-md rounded-2xl border border-clinical-border shadow-glass;
+  @apply bg-surface/80 backdrop-blur-md rounded-2xl border border-clinical-border shadow-glass;
 }
 
 .btn-primary {
@@ -46,7 +99,7 @@ h1, h2, h3 {
 
 .btn-ghost {
   @apply font-body font-medium px-6 py-3 rounded-full flex items-center gap-2
-    text-clinical-navy border border-clinical-navy/20 bg-white/60 backdrop-blur
+    text-clinical-ink border border-clinical-ink/20 bg-surface/60 backdrop-blur
     transition-colors duration-200 hover:border-clinical-teal hover:text-clinical-teal
     focus:outline-none focus-visible:ring-2 focus-visible:ring-clinical-teal focus-visible:ring-offset-2;
 }
@@ -57,5 +110,36 @@ h1, h2, h3 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Printing or saving as PDF always uses the light colours, even if the site is in dark mode
+   (otherwise the headings print as pale grey on white paper). */
+@media print {
+  :root,
+  .dark {
+    color-scheme: light;
+  --bg: 247 249 251;
+  --surface: 255 255 255;
+  --cloud: 241 244 248;
+  --mist: 232 238 244;
+  --sky: 220 232 242;
+  --border: 226 232 240;
+  --text: 30 41 59;
+  --muted: 100 116 139;
+  --ink: 15 42 67;
+  --navy: 15 42 67;
+  --navy-light: 27 59 92;
+  --teal: 14 124 134;
+  --teal-light: 18 162 174;
+  --safe: 31 157 85;
+  --safe-bg: 231 247 238;
+  --moderate: 217 119 6;
+  --moderate-bg: 254 243 226;
+  --severe: 220 38 38;
+  --severe-bg: 253 236 236;
+  }
+  body {
+    background: #fff !important;
   }
 }

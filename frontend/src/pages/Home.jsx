@@ -30,8 +30,8 @@ const MARQUEE = [
   "Check Interactions",
   "Drug Information",
   "Compare Drugs",
-  "DrugBank evidence",
-  "PubMed evidence",
+  "Grad-CAM heatmaps",
+  "Evidence retrieval",
   "Explainable results",
 ];
 
@@ -52,13 +52,13 @@ export default function Home() {
         <motion.div variants={container} initial="hidden" animate="show">
           <motion.div
             variants={rise}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-clinical-border shadow-sm mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface/80 border border-clinical-border shadow-sm mb-8"
           >
             <ShieldCheck className="w-4 h-4 text-clinical-teal" />
             <span className="text-sm font-medium text-clinical-teal">AI-Powered Medication Safety</span>
           </motion.div>
 
-          <h1 className="font-bold text-5xl sm:text-7xl lg:text-8xl xl:text-[8.5rem] leading-[0.98] text-clinical-navy">
+          <h1 className="font-bold text-5xl sm:text-7xl lg:text-8xl xl:text-[8.5rem] leading-[0.98] text-clinical-ink">
             <span className="block overflow-hidden pb-[0.08em]">
               <motion.span variants={slide} className="block">Medication safety,</motion.span>
             </span>
@@ -83,7 +83,7 @@ export default function Home() {
       </section>
 
       {/* Marquee */}
-      <div className="border-y border-clinical-border/80 bg-white/50 backdrop-blur overflow-hidden py-5" aria-hidden="true">
+      <div className="border-y border-clinical-border/80 bg-surface/50 backdrop-blur overflow-hidden py-5" aria-hidden="true">
         <div className="flex w-max animate-marquee">
           {[0, 1].map((copy) => (
             <div key={copy} className="flex items-center shrink-0">
@@ -91,7 +91,7 @@ export default function Home() {
                 <span key={t} className="flex items-center">
                   <span
                     className={`font-display text-3xl sm:text-5xl font-medium tracking-tight px-6 sm:px-8
-                                ${idx % 2 ? "text-clinical-teal" : "text-clinical-navy/80"}`}
+                                ${idx % 2 ? "text-clinical-teal" : "text-clinical-ink/80"}`}
                   >
                     {t}
                   </span>
@@ -150,7 +150,7 @@ export default function Home() {
                     <ArrowUpRight className="w-4 h-4" />
                   </span>
                 </div>
-                <h2 className="font-semibold text-2xl text-clinical-navy mb-2">{title}</h2>
+                <h2 className="font-semibold text-2xl text-clinical-ink mb-2">{title}</h2>
                 <p className="text-sm text-clinical-muted leading-relaxed flex-1">{text}</p>
                 <span className="mt-6 text-sm font-medium text-clinical-teal">{button}</span>
               </Link>

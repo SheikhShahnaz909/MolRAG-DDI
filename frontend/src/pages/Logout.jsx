@@ -32,7 +32,7 @@ export default function Logout() {
           </svg>
         </motion.div>
 
-        <h1 className="text-2xl sm:text-3xl font-semibold text-clinical-navy">You've been logged out</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-clinical-ink">You've been logged out</h1>
         <p className="text-clinical-muted text-sm mt-3 leading-relaxed">
           Your session has been cleared. You can log in again whenever you're ready.
         </p>

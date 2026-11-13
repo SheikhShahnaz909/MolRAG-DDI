@@ -22,12 +22,12 @@ function Stepper({ step }) {
                 animate={{ scale: active ? 1.1 : 1 }}
                 className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-colors
                   ${done ? "bg-clinical-teal border-clinical-teal text-white"
-                    : active ? "border-clinical-teal text-clinical-teal bg-white"
-                    : "border-clinical-border text-clinical-muted bg-white"}`}
+                    : active ? "border-clinical-teal text-clinical-teal bg-surface"
+                    : "border-clinical-border text-clinical-muted bg-surface"}`}
               >
                 {done ? <Check className="w-4 h-4" /> : n}
               </motion.div>
-              <span className={`text-xs ${active ? "text-clinical-navy font-medium" : "text-clinical-muted"}`}>{label}</span>
+              <span className={`text-xs ${active ? "text-clinical-ink font-medium" : "text-clinical-muted"}`}>{label}</span>
             </div>
             {i < STEPS.length - 1 && (
               <div className="flex-1 h-0.5 bg-clinical-border mx-2 mb-5 relative overflow-hidden rounded">

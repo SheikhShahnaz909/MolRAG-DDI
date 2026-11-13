@@ -1,4 +1,5 @@
 import { API_URL } from "../config";
+import { authHeader } from "../lib/authHeader";
 import { useState } from "react";
 import { Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
@@ -28,6 +29,7 @@ export default function ImageUploadInput({ onDetected }) {
 
       const response = await fetch(`${API_URL}/api/ocr`, {
         method: "POST",
+        headers: authHeader(), // lets the server save the scan to the user's history (no Content-Type: it's a file upload)
         body: formData,
       });
 
@@ -69,7 +71,7 @@ export default function ImageUploadInput({ onDetected }) {
         <div className="mt-4 flex items-start gap-4">
           <img src={preview} alt={fileName} className="w-24 h-24 object-cover rounded-lg border border-clinical-border" />
           <div className="text-sm flex-1">
-            <p className="font-medium text-clinical-navy mb-2">{fileName}</p>
+            <p className="font-medium text-clinical-ink mb-2">{fileName}</p>
 
             {loading && <p className="text-clinical-muted">Reading image...</p>}
 

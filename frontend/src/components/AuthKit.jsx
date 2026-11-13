@@ -24,9 +24,9 @@ export function AuthInput({ icon: Icon, label, type = "text", right, className =
           type={isPw && show ? "text" : type}
           {...props}
           className={`w-full ${Icon ? "pl-11" : "pl-4"} ${isPw ? "pr-11" : "pr-4"} py-3.5 rounded-xl text-sm
-                      border border-clinical-border bg-white/70 placeholder:text-slate-400
+                      border border-clinical-border bg-surface/70 placeholder:text-slate-400
                       transition-all duration-200 hover:border-clinical-tealLight/70
-                      focus:outline-none focus:bg-white focus:border-clinical-teal focus:ring-4 focus:ring-clinical-teal/10
+                      focus:outline-none focus:bg-surface focus:border-clinical-teal focus:ring-4 focus:ring-clinical-teal/10
                       ${className}`}
         />
         {isPw && (
@@ -65,13 +65,14 @@ export function PasswordStrength({ value }) {
     <div className="-mt-2" aria-live="polite">
       <div className="flex gap-1.5">
         {[0, 1, 2, 3].map((i) => (
-          <motion.span
-            key={i}
-            className="h-1.5 flex-1 rounded-full"
-            initial={false}
-            animate={{ backgroundColor: i < score ? meta.c : "#E2E8F0" }}
-            transition={{ duration: 0.3 }}
-          />
+          <span key={i} className="h-1.5 flex-1 rounded-full bg-clinical-border overflow-hidden">
+            <motion.span
+              className="block h-full w-full origin-left rounded-full"
+              initial={false}
+              animate={{ scaleX: i < score ? 1 : 0, backgroundColor: meta.c }}
+              transition={{ duration: 0.3 }}
+            />
+          </span>
         ))}
       </div>
       <p className="text-xs mt-1.5" style={{ color: meta.c }}>

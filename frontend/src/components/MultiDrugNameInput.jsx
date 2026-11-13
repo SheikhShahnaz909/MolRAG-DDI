@@ -38,9 +38,11 @@ export default function MultiDrugNameInput({ drugs, onChange, minDrugs = 2, maxD
         <button
           type="button"
           onClick={addDrug}
-          className="flex items-center gap-1.5 text-sm font-medium text-clinical-teal hover:text-clinical-tealLight"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-dashed border-clinical-teal/50
+                     text-sm font-medium text-clinical-teal hover:bg-clinical-teal/5 transition-colors"
         >
-          <Plus className="w-4 h-4" /> Add Another Drug
+          <Plus className="w-4 h-4" /> Add another drug
+          <span className="text-xs font-normal text-clinical-muted">({drugs.length} of {maxDrugs})</span>
         </button>
       )}
     </div>

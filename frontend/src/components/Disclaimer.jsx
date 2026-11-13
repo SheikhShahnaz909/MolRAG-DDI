@@ -2,7 +2,7 @@ import { Info } from "lucide-react";
 
 export default function Disclaimer() {
   return (
-    <div className="flex items-start gap-2 text-xs text-clinical-muted bg-white
+    <div className="flex items-start gap-2 text-xs text-clinical-muted bg-surface
                      border border-clinical-border rounded-lg px-4 py-3 mt-8">
       <Info className="w-4 h-4 shrink-0 mt-0.5 text-clinical-teal" />
       <p>

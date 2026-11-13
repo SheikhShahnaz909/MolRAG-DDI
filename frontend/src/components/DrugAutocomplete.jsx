@@ -87,9 +87,9 @@ export default function DrugAutocomplete({ value, onChange, placeholder = "Searc
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full pl-11 pr-10 py-3.5 rounded-xl border border-clinical-border bg-white/70 font-mono text-sm
+          className="w-full pl-11 pr-10 py-3.5 rounded-xl border border-clinical-border bg-surface/70 font-mono text-sm
                      transition-all duration-200 hover:border-clinical-tealLight/70
-                     focus:outline-none focus:bg-white focus:border-clinical-teal focus:ring-4 focus:ring-clinical-teal/10"
+                     focus:outline-none focus:bg-surface focus:border-clinical-teal focus:ring-4 focus:ring-clinical-teal/10"
         />
         {onRemove && (
           <button
@@ -113,7 +113,7 @@ export default function DrugAutocomplete({ value, onChange, placeholder = "Searc
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-20 mt-2 w-full bg-white rounded-2xl border border-clinical-border shadow-lift
+            className="absolute z-20 mt-2 w-full bg-surface rounded-2xl border border-clinical-border shadow-lift
                        max-h-56 overflow-y-auto py-1.5"
           >
             {matches.map((d, i) => (
@@ -126,7 +126,7 @@ export default function DrugAutocomplete({ value, onChange, placeholder = "Searc
                 onClick={() => selectDrug(d)}
                 onMouseEnter={() => setActive(i)}
                 className={`px-4 py-2 text-sm font-mono cursor-pointer transition-colors
-                            ${i === active ? "bg-clinical-mist text-clinical-navy" : "text-clinical-text"}`}
+                            ${i === active ? "bg-clinical-mist text-clinical-ink" : "text-clinical-text"}`}
               >
                 {d}
               </li>

@@ -18,3 +18,6 @@ email-validator
 pymongo
 python-dotenv
 rapidfuzz
+PyJWT
+easyocr
+certifi

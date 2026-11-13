@@ -9,12 +9,15 @@ Requires these files in backend/models/:
 """
 
 import os
+import threading
 import pandas as pd
 import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
+from services.side_effects import local_side_effects_text as _get_side_effects
+from services.side_effects import local_side_effects as get_side_effect_list  # noqa: F401  (kept for older imports)
 from utils.logger import setup_logger
 
 logger = setup_logger("rag_service")
@@ -29,23 +32,24 @@ _pair_df = pd.read_csv(os.path.join(MODELS_DIR, "faiss_pair_order.csv"))
 _index = faiss.read_index(os.path.join(MODELS_DIR, "faiss_index.bin"))
 _embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Per-drug symptom lists (from drug_side_effects.csv) -- gives FLAN-T5 actual
-# concrete symptoms to reference, since the pair evidence text alone is often
-# a generic templated sentence with no specific symptom detail.
-_side_effects_path = os.path.join(MODELS_DIR, "drug_side_effects.csv")
-if os.path.exists(_side_effects_path):
-    _side_effects_df = pd.read_csv(_side_effects_path).set_index("drug_name")
-    _SIDE_EFFECTS = _side_effects_df["side_effects"].to_dict()
-else:
-    _SIDE_EFFECTS = {}
-    logger.warning("drug_side_effects.csv not found -- explanations won't include specific symptoms.")
+# Side-effect data (local CSV and the live external lookup) is in services/side_effects.py,
+# so the explanation prompt and the API use one source.
+
+# FLAN-T5 is only needed when USE_LLM_EXPLANATION=1, so it is loaded on first use
+# (saves memory and start-up time when it is off).
+_tokenizer = None
+_model_t5 = None
+_t5_lock = threading.Lock()
 
 
-def _get_side_effects(drug_name: str) -> str:
-    return _SIDE_EFFECTS.get(drug_name.upper(), "")
-
-_tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
-_model_t5 = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-base")
+def _load_t5():
+    global _tokenizer, _model_t5
+    if _model_t5 is None:
+        with _t5_lock:
+            if _model_t5 is None:
+                logger.info("Loading FLAN-T5 (first use)...")
+                _tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
+                _model_t5 = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-base")
 
 logger.info(f"RAG ready: {_index.ntotal} evidence vectors loaded.")
 
@@ -93,20 +97,22 @@ def _semantic_fallback(drug1: str, drug2: str, top_k: int):
     return results
 
 
-def _retrieve_evidence(drug1: str, drug2: str, top_k: int = 2):
+def retrieve_evidence(drug1: str, drug2: str, top_k: int = 2):
+    """Returns (evidence_rows, exact). exact=True means the rows are about this
+    exact pair; False means they are only semantically related (the pair isn't
+    in the evidence dataset)."""
     exact = _exact_pair_matches(drug1, drug2, top_k)
     if exact:
-        return exact
+        return exact, True
     logger.info(f"No exact pair match for {drug1} + {drug2}; using semantic fallback")
-    return _semantic_fallback(drug1, drug2, top_k)
+    return _semantic_fallback(drug1, drug2, top_k), False
 
 
-def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
-    """
-    Called by routers/prediction.py after the model has already predicted severity.
-    Returns {"evidence_sources": [...], "explanation": "..."}
-    """
-    evidence = _retrieve_evidence(drug1, drug2, top_k=2)
+def generate_explanation(drug1: str, drug2: str, severity: str, evidence: list) -> str:
+    """FLAN-T5 summary. `evidence` should be [] when there is no record for
+    this exact pair, so the model is not handed text about other drugs (which
+    it would otherwise blend into the answer)."""
+    _load_t5()
     evidence_text = " ".join([e["text"] for e in evidence])
 
     side_effects_1 = _get_side_effects(drug1)
@@ -118,16 +124,17 @@ def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
             f"Known side effects of {drug2}: {side_effects_2 or 'not available'}.\n"
         )
 
-    # A more specific prompt steers FLAN-T5 away from one-line generic
-    # summaries -- asking for mechanism + a concrete symptom each individual
-    # drug can cause gets a noticeably more specific answer than just
-    # "explain why", since the pair evidence text alone is often too vague.
+    if evidence_text:
+        evidence_line = f"Relevant background evidence: {evidence_text}\n"
+    else:
+        evidence_line = "No direct evidence for this exact pair was found; rely only on the predicted severity.\n"
+
     prompt = (
         f"You are a clinical pharmacist explaining a drug interaction to a patient.\n"
         f"Drug A: {drug1}\n"
         f"Drug B: {drug2}\n"
         f"Predicted severity: {severity}\n"
-        f"Relevant background evidence: {evidence_text}\n"
+        f"{evidence_line}"
         f"{side_effects_block}\n"
         f"Write a clear explanation covering: "
         f"(1) the likely pharmacological mechanism behind this interaction, "
@@ -139,7 +146,7 @@ def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
     input_ids = _tokenizer(prompt, return_tensors="pt", truncation=True, max_length=512).input_ids
     # min_length forces the model past its default tendency to stop after one
     # short sentence; beam search + no_repeat_ngram_size give more coherent,
-    # less repetitive output than the previous greedy decoding.
+    # less repetitive output than greedy decoding.
     output_ids = _model_t5.generate(
         input_ids,
         max_length=220,
@@ -150,10 +157,17 @@ def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
         early_stopping=True,
     )
     explanation = _tokenizer.decode(output_ids[0], skip_special_tokens=True)
-
     logger.info(f"RAG explanation generated for {drug1} + {drug2}")
+    return explanation
 
+
+def retrieve_and_explain(drug1: str, drug2: str, severity: str) -> dict:
+    """Kept for compatibility: retrieval + explanation in one call."""
+    evidence, exact = retrieve_evidence(drug1, drug2, top_k=2)
+    explanation = generate_explanation(drug1, drug2, severity, evidence if exact else [])
     return {
         "evidence_sources": [f"{e['drug1']} + {e['drug2']}" for e in evidence],
+        "evidence": evidence,
+        "evidence_exact": exact,
         "explanation": explanation,
     }

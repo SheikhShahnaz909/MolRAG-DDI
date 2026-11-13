@@ -6,10 +6,10 @@ import BackArrow from "../components/BackArrow";
 
 const STEPS = [
   { icon: LogIn, title: "Login / Register", text: "Create an account or log in to get started." },
-  { icon: Type, title: "Provide Your Drugs", text: "Enter drug names, upload a medicine image, or upload a prescription — pick whichever is easiest." },
+  { icon: Type, title: "Provide Your Drugs", text: "Type drug names or upload a photo of a medicine, whichever is easiest. You can check up to six drugs at once." },
   { icon: Repeat, title: "Identify & Normalize", text: "Medicines are identified and brand names normalized to active ingredients." },
-  { icon: FlaskConical, title: "Analyse Interactions", text: "The system analyses molecular structures for potential interactions." },
-  { icon: BookOpenText, title: "Retrieve Evidence", text: "Supporting biomedical evidence is pulled from trusted sources like DrugBank and PubMed." },
+  { icon: FlaskConical, title: "Analyse Interactions", text: "The model analyses the molecule images and chemical properties of both drugs." },
+  { icon: BookOpenText, title: "Retrieve Evidence", text: "Supporting evidence for the pair is retrieved from the project's interaction-evidence dataset." },
   { icon: ShieldCheck, title: "Generate Prediction", text: "An interaction severity prediction (Safe / Moderate / Severe) is generated." },
   { icon: MonitorCheck, title: "View Results", text: "Severity, explanation, and supporting drug information are displayed clearly." },
 ];

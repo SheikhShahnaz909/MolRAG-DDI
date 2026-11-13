@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Loader2 } from "lucide-react";
 
-// Same stages as the How It Works page.
+// Same stages as the How It Works page. When the server streams progress
+// (live = true) the active stage comes from the server; otherwise the stages
+// advance on a timer as an estimate and the last one waits for the response.
 const STAGES = [
   "Identifying and normalizing the drugs",
   "Analysing molecular structures",
@@ -10,15 +12,16 @@ const STAGES = [
   "Generating the prediction",
 ];
 
-// The server doesn't report progress, so the stages advance on a timer and
-// the last one stays active until the real response arrives.
-export default function PredictionProgress({ drugs = [] }) {
-  const [active, setActive] = useState(0);
+export default function PredictionProgress({ drugs = [], stage = null, live = false }) {
+  const [timerStage, setTimerStage] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setActive((a) => Math.min(a + 1, STAGES.length - 1)), 2200);
+    if (live) return undefined;
+    const t = setInterval(() => setTimerStage((a) => Math.min(a + 1, STAGES.length - 1)), 2200);
     return () => clearInterval(t);
-  }, []);
+  }, [live]);
+
+  const active = live && stage !== null ? Math.min(Math.max(stage, 0), STAGES.length - 1) : timerStage;
 
   return (
     <motion.div
@@ -30,7 +33,7 @@ export default function PredictionProgress({ drugs = [] }) {
       aria-live="polite"
     >
       <p className="font-mono text-sm text-clinical-muted mb-1">Checking</p>
-      <h2 className="font-semibold text-2xl text-clinical-navy mb-6 break-words">
+      <h2 className="font-semibold text-2xl text-clinical-ink mb-6 break-words">
         {drugs.slice(0, 2).join(" × ")}
       </h2>
 
@@ -55,7 +58,7 @@ export default function PredictionProgress({ drugs = [] }) {
               >
                 {done ? <Check className="w-4 h-4" /> : current ? <Loader2 className="w-4 h-4 animate-spin" /> : <span className="text-xs">{i + 1}</span>}
               </span>
-              <span className={`text-sm transition-colors ${current ? "text-clinical-navy font-medium" : done ? "text-clinical-text" : "text-clinical-muted"}`}>
+              <span className={`text-sm transition-colors ${current ? "text-clinical-ink font-medium" : done ? "text-clinical-text" : "text-clinical-muted"}`}>
                 {label}
               </span>
             </li>
@@ -64,7 +67,9 @@ export default function PredictionProgress({ drugs = [] }) {
       </ul>
 
       <p className="text-xs text-clinical-muted mt-6">
-        These steps are an estimate of progress while the server works. This can take a few moments.
+        {live
+          ? "Live progress from the server."
+          : "These steps are an estimate of progress while the server works. This can take a few moments."}
       </p>
     </motion.div>
   );

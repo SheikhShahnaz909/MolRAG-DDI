@@ -59,11 +59,11 @@ export default function Profile() {
         <div className="grid md:grid-cols-2 gap-6 items-start">
           {/* Account information */}
           <motion.div variants={item} className="card p-6 sm:p-8">
-            <h2 className="font-semibold text-xl text-clinical-navy mb-5">Account Information</h2>
+            <h2 className="font-semibold text-xl text-clinical-ink mb-5">Account Information</h2>
             <div className="space-y-3">
               {rows.map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-center gap-4 p-4 rounded-xl bg-clinical-cloud">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-clinical-teal" />
                   </div>
                   <div className="min-w-0">
@@ -83,7 +83,7 @@ export default function Profile() {
                 className="group card flex items-center justify-between gap-4 p-6 hover:shadow-lift hover:border-clinical-teal transition-all"
               >
                 <div>
-                  <p className="font-semibold text-lg text-clinical-navy">View My History</p>
+                  <p className="font-semibold text-lg text-clinical-ink">View My History</p>
                   <p className="text-sm text-clinical-muted mt-1">
                     View your interaction checks, drug searches, and comparisons.
                   </p>
@@ -95,7 +95,7 @@ export default function Profile() {
             <Link
               to="/logout"
               className="flex items-center justify-center gap-2 w-full px-5 py-3.5 rounded-full border border-clinical-border
-                         bg-white/60 text-clinical-text font-medium transition-colors
+                         bg-surface/60 text-clinical-text font-medium transition-colors
                          hover:border-severity-severe hover:text-severity-severe hover:bg-severity-severeBg"
             >
               <LogOut className="w-4 h-4" /> Logout

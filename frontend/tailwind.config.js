@@ -1,30 +1,34 @@
 /** @type {import('tailwindcss').Config} */
+const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
         clinical: {
-          bg: "#F7F9FB",
-          navy: "#0F2A43",
-          navyLight: "#1B3B5C",
-          teal: "#0E7C86",
-          tealLight: "#12A2AE",
-          text: "#1E293B",
-          muted: "#64748B",
-          border: "#E2E8F0",
-          // new soft surface tones (blue-gray, from the reference)
-          cloud: "#F1F4F8",
-          mist: "#E8EEF4",
-          sky: "#DCE8F2",
+          bg: v("bg"),
+          navy: v("navy"),          // backgrounds, gradients, table headers
+          navyLight: v("navy-light"),
+          ink: v("ink"),            // headings and text that used to be navy
+          teal: v("teal"),
+          tealLight: v("teal-light"),
+          text: v("text"),
+          muted: v("muted"),
+          border: v("border"),
+          cloud: v("cloud"),
+          mist: v("mist"),
+          sky: v("sky"),
         },
+        surface: v("surface"),      // cards, inputs, dropdowns
         severity: {
-          safe: "#1F9D55",
-          safeBg: "#E7F7EE",
-          moderate: "#D97706",
-          moderateBg: "#FEF3E2",
-          severe: "#DC2626",
-          severeBg: "#FDECEC",
+          safe: v("safe"),
+          safeBg: v("safe-bg"),
+          moderate: v("moderate"),
+          moderateBg: v("moderate-bg"),
+          severe: v("severe"),
+          severeBg: v("severe-bg"),
         },
       },
       fontFamily: {

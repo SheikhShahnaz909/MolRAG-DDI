@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # ---- Paths ----
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "best_model.pt")
-IMAGE_DIR = r"C:\MolRAG-DDI\backend\images"
+IMAGE_DIR = os.path.join(BASE_DIR, "images")  # was a hardcoded C:\ path, which breaks on any other machine/server
 GRADCAM_OUTPUT_DIR = os.path.join(BASE_DIR, "outputs", "gradcam")
 LOG_DIR = os.path.join(BASE_DIR, "logs")
 

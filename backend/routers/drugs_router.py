@@ -5,15 +5,21 @@ is just browsing/searching, not running a prediction. Also checks brand names
 (e.g. "Dolo" resolves to "Paracetamol") via brand_name_mapping.csv.
 """
 
+import math
 import os
+import re
 import pandas as pd
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 from rapidfuzz import process, fuzz, utils as fuzz_utils
 
 from utils.db import db
-from utils.drug_lookup import get_known_drugs
+from services.fda_labels import get_drug_label_info
+from services.side_effects import get_side_effects_info
+from utils.activity import log_activity
+from utils.auth import get_optional_user_email
+from utils.drug_lookup import known_drugs_sorted, model_drug_profile
 
 router = APIRouter()
 
@@ -29,6 +35,18 @@ if os.path.exists(_brand_map_path):
     }
 else:
     _BRAND_TO_GENERIC = {}
+
+
+def _clean(value):
+    """The catalog was loaded from pandas, so missing numbers (e.g. approval_year) are stored
+    as NaN. JSON cannot carry NaN and the server crashed with a 500, so send null instead."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {k: _clean(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_clean(v) for v in value]
+    return value
 
 
 def _get_all_drug_names() -> list:
@@ -50,7 +68,7 @@ async def list_predictable_drugs():
     This is usually SMALLER than the full /drugs catalog, so the Prediction
     page's autocomplete should suggest from this list, not from /drugs,
     to avoid suggesting a drug that then fails prediction."""
-    return {"drugs": sorted(get_known_drugs())}
+    return {"drugs": known_drugs_sorted()}
 
 
 @router.get("/drugs")
@@ -78,7 +96,7 @@ async def list_drugs(letter: Optional[str] = None, search: Optional[str] = None,
     query = {}
     if letter:
         # Case-insensitive first-letter match
-        query["drug_name"] = {"$regex": f"^{letter}", "$options": "i"}
+        query["drug_name"] = {"$regex": f"^{re.escape(letter)}", "$options": "i"}
 
     skip = (page - 1) * page_size
     cursor = db.drug_catalog.find(query, {"_id": 0, "drug_name": 1}) \
@@ -90,28 +108,58 @@ async def list_drugs(letter: Optional[str] = None, search: Optional[str] = None,
 
 
 @router.get("/drugs/{drug_name}")
-async def get_drug_details(drug_name: str):
+async def get_drug_details(drug_name: str, user_email: Optional[str] = Depends(get_optional_user_email)):
     # Resolve brand names (e.g. "Dolo" -> "Paracetamol") before looking up
     drug_name = _resolve_brand_or_generic(drug_name)
 
     # Case-insensitive exact lookup
     doc = db.drug_catalog.find_one(
-        {"drug_name": {"$regex": f"^{drug_name}$", "$options": "i"}}, {"_id": 0}
+        {"drug_name": {"$regex": f"^{re.escape(drug_name)}$", "$options": "i"}}, {"_id": 0}
     )
-    if doc is None:
-        # Try a fuzzy suggestion before giving up entirely
-        all_names = _get_all_drug_names()
-        match = process.extractOne(
-            drug_name, all_names, scorer=fuzz.WRatio,
-            processor=fuzz_utils.default_process
+    if doc is not None:
+        log_activity(user_email, "drug_info", f"Looked up {doc['drug_name']}", {"drug_name": doc["drug_name"]},
+                     dedupe_minutes=10)
+        return _clean(doc)
+
+    # Not in the browsing catalog: if it is a drug the model knows, show its chemistry numbers
+    profile = model_drug_profile(drug_name)
+    if profile is not None:
+        log_activity(user_email, "drug_info", f"Looked up {profile['drug_name']}", {"drug_name": profile["drug_name"]},
+                     dedupe_minutes=10)
+        return profile
+
+    # Try a fuzzy suggestion before giving up entirely
+    all_names = _get_all_drug_names()
+    match = process.extractOne(
+        drug_name, all_names, scorer=fuzz.WRatio,
+        processor=fuzz_utils.default_process
+    )
+    if match and match[1] >= 80:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Drug '{drug_name}' not found. Did you mean '{match[0]}'?"
         )
-        if match and match[1] >= 80:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Drug '{drug_name}' not found. Did you mean '{match[0]}'?"
-            )
-        raise HTTPException(status_code=404, detail=f"Drug '{drug_name}' not found.")
-    return doc
+    raise HTTPException(status_code=404, detail=f"Drug '{drug_name}' not found.")
+
+
+@router.get("/drugs/{drug_name}/label")
+def drug_label(drug_name: str):
+    """What the FDA label says about one drug: what it is used for, drug class, routes, boxed
+    warning (short word-for-word excerpts, with a link). info is null when no label is found
+    or outside lookups are off."""
+    name = _resolve_brand_or_generic(drug_name).strip()
+    return {"drug": name, "info": get_drug_label_info(name)}
+
+
+@router.get("/drugs/{drug_name}/side-effects")
+def drug_side_effects(drug_name: str, external: str = "auto"):
+    """Side effects for one drug from more than one source.
+    external=auto    local dataset first; FDA label only when the local file has nothing
+    external=always  local dataset AND the FDA label
+    external=never   local dataset only"""
+    if external not in ("auto", "always", "never"):
+        raise HTTPException(status_code=400, detail="external must be auto, always or never.")
+    return get_side_effects_info(_resolve_brand_or_generic(drug_name).strip(), external=external)
 
 
 class CompareRequest(BaseModel):
@@ -119,7 +167,7 @@ class CompareRequest(BaseModel):
 
 
 @router.post("/compare")
-async def compare_drugs(payload: CompareRequest):
+async def compare_drugs(payload: CompareRequest, user_email: Optional[str] = Depends(get_optional_user_email)):
     if len(payload.drug_names) < 2:
         raise HTTPException(status_code=400, detail="Provide at least 2 drugs to compare.")
 
@@ -132,10 +180,10 @@ async def compare_drugs(payload: CompareRequest):
 
         # Case-insensitive exact match first
         doc = db.drug_catalog.find_one(
-            {"drug_name": {"$regex": f"^{name}$", "$options": "i"}}, {"_id": 0}
+            {"drug_name": {"$regex": f"^{re.escape(name)}$", "$options": "i"}}, {"_id": 0}
         )
         if doc:
-            results.append({**doc, "found": True})
+            results.append({**_clean(doc), "found": True})
             continue
 
         # Fuzzy fallback -- suggest, don't silently substitute
@@ -146,4 +194,8 @@ async def compare_drugs(payload: CompareRequest):
         suggestion = match[0] if match and match[1] >= 80 else None
         results.append({"drug_name": original_name, "found": False, "suggestion": suggestion})
 
+    found = [r["drug_name"] for r in results if r.get("found")]
+    if found:
+        log_activity(user_email, "compare", f"Compared {', '.join(found)}",
+                     {"drugs": found, "requested": payload.drug_names}, dedupe_minutes=10)
     return {"drugs": results}

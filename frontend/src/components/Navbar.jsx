@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import ThemeToggle from "./ThemeToggle";
 import {
   UserCircle, Menu, X, History, HelpCircle, Info,
   LogIn, UserPlus, LogOut, User,
@@ -47,7 +48,7 @@ function PillLink({ to, label, layoutId, small }) {
 }
 
 const iconBtn =
-  "w-10 h-10 rounded-full flex items-center justify-center text-clinical-navy " +
+  "w-10 h-10 rounded-full flex items-center justify-center text-clinical-ink " +
   "hover:bg-clinical-mist transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-clinical-teal";
 
 const itemCls =
@@ -95,9 +96,9 @@ export default function Navbar() {
       )}
 
       <div
-        className={`relative z-50 max-w-[1400px] mx-auto rounded-[1.75rem] border border-white/80 ring-1 ring-clinical-border/60
+        className={`relative z-50 max-w-[1400px] mx-auto rounded-[1.75rem] border border-clinical-border/60 ring-1 ring-clinical-border/60
                     backdrop-blur-xl transition-all duration-300
-                    ${scrolled ? "bg-white/85 shadow-lift" : "bg-white/60 shadow-glass"}`}
+                    ${scrolled ? "bg-surface/85 shadow-lift" : "bg-surface/60 shadow-glass"}`}
       >
         <div className="h-14 px-3 sm:px-4 flex items-center justify-between">
           {/* LOGO */}
@@ -109,7 +110,7 @@ export default function Navbar() {
               transition={{ type: "spring", stiffness: 300, damping: 14 }}
               className="w-10 h-10 object-contain"
             />
-            <span className="font-display font-semibold text-lg text-clinical-navy">MolRAG-DDI</span>
+            <span className="font-display font-semibold text-lg text-clinical-ink">MolRAG-DDI</span>
           </Link>
 
           {/* DESKTOP NAV */}
@@ -121,6 +122,7 @@ export default function Navbar() {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-1">
+            <ThemeToggle />
             <div className="relative">
               <button
                 type="button"
@@ -136,7 +138,7 @@ export default function Navbar() {
                 {profileOpen && (
                   <motion.div
                     {...panelMotion}
-                    className="absolute right-0 top-12 w-52 p-2 bg-white rounded-2xl border border-clinical-border shadow-lift origin-top-right"
+                    className="absolute right-0 top-12 w-52 p-2 bg-surface rounded-2xl border border-clinical-border shadow-lift origin-top-right"
                   >
                     {isLoggedIn ? (
                       <>
@@ -177,7 +179,7 @@ export default function Navbar() {
                 {menuOpen && (
                   <motion.div
                     {...panelMotion}
-                    className="absolute right-0 top-12 w-60 p-2 bg-white rounded-2xl border border-clinical-border shadow-lift origin-top-right"
+                    className="absolute right-0 top-12 w-60 p-2 bg-surface rounded-2xl border border-clinical-border shadow-lift origin-top-right"
                   >
                     <Link to="/how-it-works" onClick={closeMenus} className={itemCls}>
                       <HelpCircle className="w-5 h-5 text-clinical-teal" /> How It Works

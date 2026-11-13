@@ -95,6 +95,8 @@ def main():
 
     df = pd.read_csv(CSV_FILE)
 
+    df = df.astype(object).where(pd.notna(df), None)
+
     print(f"Read {len(df)} drug records")
 
     print()

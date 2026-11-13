@@ -1,11 +1,12 @@
 import { motion, useMotionTemplate, useMotionValue, useSpring } from "framer-motion";
 import { FlaskConical, History, ShieldCheck } from "lucide-react";
 import BackArrow from "./BackArrow";
+import ThemeToggle from "./ThemeToggle";
 
 const PERKS = [
   { icon: FlaskConical, text: "Save every interaction check you run" },
   { icon: History, text: "Revisit past searches and comparisons" },
-  { icon: ShieldCheck, text: "Evidence from DrugBank and PubMed" },
+  { icon: ShieldCheck, text: "Evidence retrieved for every pair" },
 ];
 
 // Split screen: a brand panel whose light follows the cursor, and the form on the right.
@@ -78,11 +79,14 @@ export default function AuthLayout({ heading, blurb, title, subtitle, back = fal
       </aside>
 
       {/* Form side */}
-      <section className="flex items-center justify-center py-6">
+      <section className="relative flex items-center justify-center py-6">
+        <div className="absolute top-0 right-0">
+          <ThemeToggle />
+        </div>
         <div className="w-full max-w-md">
           {back && <BackArrow />}
           <img src="/logo.png" alt="MolRAG-DDI logo" className="lg:hidden w-16 h-16 object-contain mb-4" />
-          <h1 className="font-semibold text-3xl sm:text-4xl text-clinical-navy">{title}</h1>
+          <h1 className="font-semibold text-3xl sm:text-4xl text-clinical-ink">{title}</h1>
           {subtitle && <p className="text-clinical-muted mt-2 mb-7">{subtitle}</p>}
           {children}
         </div>

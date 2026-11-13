@@ -13,9 +13,12 @@ from typing import List
 
 import numpy as np
 from PIL import Image
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from rapidfuzz import process, fuzz, utils as fuzz_utils
 
+from utils.activity import log_activity
+from utils.auth import get_optional_user_email
 from utils.logger import setup_logger
 from routers.drugs_router import _get_all_drug_names, _resolve_brand_or_generic
 
@@ -69,7 +72,7 @@ def _match_candidates(candidate_words: List[str], min_score: float = 70.0, top_n
 
 
 @router.post("/ocr")
-async def extract_drug_names(file: UploadFile = File(...)):
+async def extract_drug_names(file: UploadFile = File(...), user_email: Optional[str] = Depends(get_optional_user_email)):
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=400,
@@ -88,5 +91,10 @@ async def extract_drug_names(file: UploadFile = File(...)):
 
     if not matches:
         logger.info(f"No drug matches found. Raw OCR text: {candidate_words}")
+    else:
+        # Only the detected drug names are saved -- never the photo itself.
+        names = [m["drug_name"] for m in matches]
+        log_activity(user_email, "image_scan", f"Scanned a medicine photo: {', '.join(names[:3])}",
+                     {"matches": names})
 
     return {"matches": matches, "raw_text": candidate_words}

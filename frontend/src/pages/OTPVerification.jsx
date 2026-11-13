@@ -191,7 +191,7 @@ export default function OTPVerification() {
       subtitle={
         <>
           We sent a 6-digit code to{" "}
-          <span className="font-medium text-clinical-navy break-all">{email || "your email address"}</span>.
+          <span className="font-medium text-clinical-ink break-all">{email || "your email address"}</span>.
         </>
       }
     >
@@ -210,7 +210,7 @@ export default function OTPVerification() {
                              transition={{ delay: 0.25, duration: 0.5 }} />
               </svg>
             </motion.div>
-            <p className="font-display font-semibold text-xl text-clinical-navy mt-5">Email verified</p>
+            <p className="font-display font-semibold text-xl text-clinical-ink mt-5">Email verified</p>
             <p className="text-sm text-clinical-muted mt-1" role="status">Setting up your account...</p>
           </motion.div>
         ) : (
@@ -240,11 +240,11 @@ export default function OTPVerification() {
                   maxLength={1}
                   aria-label={`OTP digit ${index + 1}`}
                   className={`w-11 h-14 sm:w-14 sm:h-16 text-center text-xl font-semibold font-mono rounded-xl border
-                              text-clinical-navy transition-colors duration-200
+                              text-clinical-ink transition-colors duration-200
                               focus:outline-none focus:border-clinical-teal focus:ring-4 focus:ring-clinical-teal/10
                               ${error ? "border-severity-severe bg-severity-severeBg/40"
                                 : digit ? "border-clinical-teal bg-clinical-teal/5"
-                                : "border-clinical-border bg-white/70 hover:border-clinical-tealLight/70"}`}
+                                : "border-clinical-border bg-surface/70 hover:border-clinical-tealLight/70"}`}
                 />
               ))}
             </motion.div>
@@ -262,7 +262,7 @@ export default function OTPVerification() {
               {seconds > 0 ? (
                 <p className="text-sm text-clinical-muted">
                   Resend OTP in{" "}
-                  <span className="font-mono font-medium text-clinical-navy">
+                  <span className="font-mono font-medium text-clinical-ink">
                     00:{String(seconds).padStart(2, "0")}
                   </span>
                 </p>
