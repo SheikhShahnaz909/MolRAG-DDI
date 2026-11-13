@@ -9,7 +9,7 @@ import pandas as pd
 from pymongo import MongoClient
 
 # Same connection string as populate_mongodb.py
-MONGO_URI = "mongodb+srv://23csrehmat4967_db_user:MolRAG2026@cluster0.0xwqaiu.mongodb.net/?appName=Cluster0"
+MONGO_URI = ""
 
 DATA_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
