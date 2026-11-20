@@ -2,7 +2,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -32,18 +31,18 @@ app.use(express.static(frontendDist));
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const MONGO_URI = process.env.MONGO_URI;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
+// MongoDB
 let mongoClient = null;
 let usersCollection = null;
 
-// MongoDB connection
 async function connectDB() {
   if (!MONGO_URI) {
     throw new Error("MONGO_URI is not configured.");
   }
 
   mongoClient = new MongoClient(MONGO_URI);
-
   await mongoClient.connect();
 
   const db = mongoClient.db("molrag_ddi");
@@ -57,7 +56,7 @@ async function connectDB() {
   console.log("Connected to MongoDB.");
 }
 
-// Database availability check
+// Database availability
 function requireDatabase(res) {
   if (!usersCollection) {
     res.status(503).json({
@@ -70,7 +69,7 @@ function requireDatabase(res) {
   return true;
 }
 
-// JWT configuration check
+// JWT availability
 function requireJWT(res) {
   if (!JWT_SECRET) {
     res.status(503).json({
@@ -87,17 +86,6 @@ function requireJWT(res) {
 const otpStore = new Map();
 const VERIFIED_WINDOW_MS = 10 * 60 * 1000;
 
-// Email transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
-
 function generateOTP() {
   return crypto.randomInt(100000, 1000000).toString();
 }
@@ -106,12 +94,81 @@ function normalizeEmail(email) {
   return email.trim().toLowerCase();
 }
 
-// Health check
+// =====================================================
+// RESEND EMAIL FUNCTION
+// =====================================================
+
+async function sendOTPEmail(email, otp) {
+  if (!RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured.");
+  }
+
+  const sender =
+    process.env.RESEND_FROM_EMAIL ||
+    "MolRAG-DDI <onboarding@resend.dev>";
+
+  const response = await fetch(
+    "https://api.resend.com/emails",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: sender,
+        to: [email],
+        subject: "Your MolRAG-DDI Verification Code",
+        text: `Your MolRAG-DDI verification code is ${otp}. This code expires in 5 minutes.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto;">
+            <h2 style="color: #0F2A43;">MolRAG-DDI</h2>
+            <p>Your email verification code is:</p>
+
+            <div style="
+              font-size: 32px;
+              font-weight: bold;
+              letter-spacing: 8px;
+              margin: 25px 0;
+              color: #0E7C86;
+            ">
+              ${otp}
+            </div>
+
+            <p>This OTP expires in <strong>5 minutes</strong>.</p>
+
+            <p style="color: #64748B; font-size: 13px;">
+              If you did not request this code, you can safely ignore this email.
+            </p>
+          </div>
+        `
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error("RESEND API ERROR:", data);
+    throw new Error(
+      data.message || "Unable to send verification email."
+    );
+  }
+
+  console.log("OTP email sent successfully:", data.id);
+  return data;
+}
+
+// =====================================================
+// HEALTH CHECK
+// =====================================================
+
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
     message: "MolRAG-DDI server is running.",
-    database: usersCollection ? "connected" : "unavailable"
+    database: usersCollection ? "connected" : "unavailable",
+    emailProvider: RESEND_API_KEY ? "configured" : "unavailable"
   });
 });
 
@@ -125,12 +182,21 @@ app.post("/api/otp/send", async (req, res) => {
 
     if (!email) {
       return res.status(400).json({
+        success: false,
         message: "Email is required."
+      });
+    }
+
+    if (!RESEND_API_KEY) {
+      return res.status(503).json({
+        success: false,
+        message: "Email service is not configured."
       });
     }
 
     const normalizedEmail = normalizeEmail(email);
     const otp = generateOTP();
+
     const expiresAt = Date.now() + 5 * 60 * 1000;
 
     otpStore.set(normalizedEmail, {
@@ -140,25 +206,12 @@ app.post("/api/otp/send", async (req, res) => {
       verified: false
     });
 
-    await transporter.sendMail({
-      from: `"MolRAG-DDI" <${process.env.SMTP_USER}>`,
-      to: normalizedEmail,
-      subject: "Your MolRAG-DDI Verification Code",
-      text: `Your MolRAG-DDI verification code is ${otp}. This code expires in 5 minutes.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto;">
-          <h2 style="color: #0F2A43;">MolRAG-DDI</h2>
-          <p>Your email verification code is:</p>
-          <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 25px 0; color: #0E7C86;">
-            ${otp}
-          </div>
-          <p>This OTP will expire in <strong>5 minutes</strong>.</p>
-          <p style="color: #64748B; font-size: 13px;">
-            If you did not request this code, you can safely ignore this email.
-          </p>
-        </div>
-      `
-    });
+    try {
+      await sendOTPEmail(normalizedEmail, otp);
+    } catch (emailError) {
+      otpStore.delete(normalizedEmail);
+      throw emailError;
+    }
 
     return res.json({
       success: true,
@@ -170,7 +223,7 @@ app.post("/api/otp/send", async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Unable to send OTP."
+      message: error.message || "Unable to send OTP."
     });
   }
 });
@@ -185,6 +238,7 @@ app.post("/api/otp/verify", (req, res) => {
 
     if (!email || !otp) {
       return res.status(400).json({
+        success: false,
         message: "Email and OTP are required."
       });
     }
@@ -194,6 +248,7 @@ app.post("/api/otp/verify", (req, res) => {
 
     if (!record) {
       return res.status(400).json({
+        success: false,
         message: "No OTP found. Please request a new OTP."
       });
     }
@@ -202,6 +257,7 @@ app.post("/api/otp/verify", (req, res) => {
       otpStore.delete(normalizedEmail);
 
       return res.status(400).json({
+        success: false,
         message: "OTP has expired. Please request a new one."
       });
     }
@@ -210,6 +266,7 @@ app.post("/api/otp/verify", (req, res) => {
       otpStore.delete(normalizedEmail);
 
       return res.status(429).json({
+        success: false,
         message: "Too many incorrect attempts. Please request a new OTP."
       });
     }
@@ -218,6 +275,7 @@ app.post("/api/otp/verify", (req, res) => {
       record.attempts++;
 
       return res.status(400).json({
+        success: false,
         message: "Incorrect OTP."
       });
     }
@@ -247,18 +305,21 @@ app.post("/api/otp/verify", (req, res) => {
 
 app.post("/api/auth/register", async (req, res) => {
   try {
-    if (!requireDatabase(res) || !requireJWT(res)) return;
+    if (!requireDatabase(res)) return;
+    if (!requireJWT(res)) return;
 
     const { email, password, name } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
+        success: false,
         message: "Email and password are required."
       });
     }
 
     if (password.length < 8) {
       return res.status(400).json({
+        success: false,
         message: "Password must be at least 8 characters."
       });
     }
@@ -266,8 +327,13 @@ app.post("/api/auth/register", async (req, res) => {
     const normalizedEmail = normalizeEmail(email);
     const record = otpStore.get(normalizedEmail);
 
-    if (!record || !record.verified || Date.now() > record.expiresAt) {
+    if (
+      !record ||
+      !record.verified ||
+      Date.now() > record.expiresAt
+    ) {
       return res.status(400).json({
+        success: false,
         message: "Email not verified. Please verify your OTP before registering."
       });
     }
@@ -278,6 +344,7 @@ app.post("/api/auth/register", async (req, res) => {
 
     if (existing) {
       return res.status(409).json({
+        success: false,
         message: "An account with this email already exists."
       });
     }
@@ -328,12 +395,14 @@ app.post("/api/auth/register", async (req, res) => {
 
 app.post("/api/auth/login", async (req, res) => {
   try {
-    if (!requireDatabase(res) || !requireJWT(res)) return;
+    if (!requireDatabase(res)) return;
+    if (!requireJWT(res)) return;
 
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
+        success: false,
         message: "Email and password are required."
       });
     }
@@ -346,6 +415,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     if (!user) {
       return res.status(401).json({
+        success: false,
         message: "Invalid email or password."
       });
     }
@@ -357,6 +427,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     if (!match) {
       return res.status(401).json({
+        success: false,
         message: "Invalid email or password."
       });
     }
@@ -395,18 +466,21 @@ app.post("/api/auth/login", async (req, res) => {
 
 app.post("/api/auth/reset-password", async (req, res) => {
   try {
-    if (!requireDatabase(res) || !requireJWT(res)) return;
+    if (!requireDatabase(res)) return;
+    if (!requireJWT(res)) return;
 
     const { email, newPassword } = req.body;
 
     if (!email || !newPassword) {
       return res.status(400).json({
+        success: false,
         message: "Email and new password are required."
       });
     }
 
     if (newPassword.length < 8) {
       return res.status(400).json({
+        success: false,
         message: "Password must be at least 8 characters."
       });
     }
@@ -414,8 +488,13 @@ app.post("/api/auth/reset-password", async (req, res) => {
     const normalizedEmail = normalizeEmail(email);
     const record = otpStore.get(normalizedEmail);
 
-    if (!record || !record.verified || Date.now() > record.expiresAt) {
+    if (
+      !record ||
+      !record.verified ||
+      Date.now() > record.expiresAt
+    ) {
       return res.status(400).json({
+        success: false,
         message: "Email not verified. Please verify your OTP before resetting your password."
       });
     }
@@ -426,6 +505,7 @@ app.post("/api/auth/reset-password", async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
+        success: false,
         message: "No account found with this email."
       });
     }
@@ -464,7 +544,10 @@ app.post("/api/auth/reset-password", async (req, res) => {
 // =====================================================
 
 app.use((req, res, next) => {
-  if (req.method !== "GET" || req.path.startsWith("/api/")) {
+  if (
+    req.method !== "GET" ||
+    req.path.startsWith("/api/")
+  ) {
     return next();
   }
 
@@ -485,7 +568,7 @@ async function startServer() {
     if (MONGO_URI) {
       await connectDB();
     } else {
-      console.warn("MongoDB URI not configured. Database features unavailable.");
+      console.warn("MongoDB URI not configured.");
     }
   } catch (error) {
     console.error("MongoDB connection failed:", error.message);
