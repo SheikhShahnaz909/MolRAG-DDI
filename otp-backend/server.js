@@ -9,6 +9,7 @@ import { MongoClient } from "mongodb";
 import dns from "node:dns";
 import path from "path";
 import { fileURLToPath } from "url";
+import { Readable } from "node:stream";
 
 // DNS configuration
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -22,18 +23,122 @@ const __dirname = path.dirname(__filename);
 
 const frontendDist = path.resolve(__dirname, "../frontend/dist");
 
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET;
+const MONGO_URI = process.env.MONGO_URI;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+
+// Python FastAPI backend
+const PYTHON_BACKEND =
+  "https://molrag-ddi-backend.onrender.com";
+
+// =====================================================
+// PYTHON BACKEND PROXY
+// =====================================================
+
+// Keep Node authentication and health routes local.
+// Forward all other /api requests to FastAPI.
+app.use(async (req, res, next) => {
+  const isApiRequest = req.path.startsWith("/api/");
+
+  const isNodeRoute =
+    req.path === "/api/health" ||
+    req.path.startsWith("/api/otp/") ||
+    req.path.startsWith("/api/auth/");
+
+  if (!isApiRequest || isNodeRoute) {
+    return next();
+  }
+
+  try {
+    let targetPath = req.originalUrl;
+
+    // Provide a separate health endpoint for Python.
+    if (req.path === "/api/backend-health") {
+      targetPath = "/api/health";
+    }
+
+    const targetUrl = `${PYTHON_BACKEND}${targetPath}`;
+
+    const headers = { ...req.headers };
+
+    // Remove headers that should not be forwarded.
+    delete headers.host;
+    delete headers.connection;
+    delete headers["content-length"];
+    delete headers["transfer-encoding"];
+
+    const options = {
+      method: req.method,
+      headers,
+      redirect: "follow",
+      signal: AbortSignal.timeout(300000)
+    };
+
+    // Forward the original request body without parsing it.
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      options.body = req;
+      options.duplex = "half";
+    }
+
+    console.log("Forwarding API request:", req.method, targetUrl);
+
+    const backendResponse = await fetch(targetUrl, options);
+
+    res.status(backendResponse.status);
+
+    // Forward response headers.
+    backendResponse.headers.forEach((value, key) => {
+      const lowerKey = key.toLowerCase();
+
+      if (
+        lowerKey !== "transfer-encoding" &&
+        lowerKey !== "connection" &&
+        lowerKey !== "content-encoding" &&
+        lowerKey !== "content-length"
+      ) {
+        res.setHeader(key, value);
+      }
+    });
+
+    // Stream the response back to the frontend.
+    if (req.method === "HEAD" || !backendResponse.body) {
+      return res.end();
+    }
+
+    Readable.fromWeb(backendResponse.body).pipe(res);
+
+  } catch (error) {
+    console.error("Python backend proxy error:", error);
+
+    if (!res.headersSent) {
+      return res.status(502).json({
+        success: false,
+        message: "Python backend is temporarily unavailable.",
+        error: error.name === "TimeoutError"
+          ? "Backend request timed out."
+          : "Unable to connect to Python backend."
+      });
+    }
+
+    res.end();
+  }
+});
+
+// =====================================================
+// MIDDLEWARE
+// =====================================================
+
 app.use(cors());
 app.use(express.json());
 
 // Serve React frontend
 app.use(express.static(frontendDist));
 
-const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET;
-const MONGO_URI = process.env.MONGO_URI;
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
+// =====================================================
+// MONGODB CONFIGURATION
+// =====================================================
 
-// MongoDB
 let mongoClient = null;
 let usersCollection = null;
 
@@ -63,6 +168,7 @@ function requireDatabase(res) {
       success: false,
       message: "Database is currently unavailable."
     });
+
     return false;
   }
 
@@ -76,13 +182,17 @@ function requireJWT(res) {
       success: false,
       message: "Authentication is not configured."
     });
+
     return false;
   }
 
   return true;
 }
 
-// OTP storage
+// =====================================================
+// OTP CONFIGURATION
+// =====================================================
+
 const otpStore = new Map();
 const VERIFIED_WINDOW_MS = 10 * 60 * 1000;
 
@@ -150,17 +260,19 @@ async function sendOTPEmail(email, otp) {
 
   if (!response.ok) {
     console.error("RESEND API ERROR:", data);
+
     throw new Error(
       data.message || "Unable to send verification email."
     );
   }
 
   console.log("OTP email sent successfully:", data.id);
+
   return data;
 }
 
 // =====================================================
-// HEALTH CHECK
+// NODE HEALTH CHECK
 // =====================================================
 
 app.get("/api/health", (req, res) => {
